@@ -396,4 +396,22 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 ---
 *最後更新：2025年9月2日*  
 *重大修復：JavaScript display覆蓋問題，iPad橫式佈局完全修復*  
+*工作流程：已建立Git自動化同步機制*  
 *狀態：功能完整，已部署可正式使用*
+
+## 📂 工作目錄設定說明
+
+**重要**：本專案已切換到Git同步工作流程
+- **工作目錄**：`D:\mywork\99times`（已連接GitHub repository）
+- **自動化流程**：修改檔案 → commit確認 → 自動push到GitHub
+- **GitHub同步**：https://github.com/huansbox/99timestable
+- **操作方式**：每次修改後輸入"commit"即可自動提交並推送
+
+## 🔄 工作流程轉換完成
+
+1. ✅ Clone GitHub repository到本地
+2. ✅ 合併所有專案檔案（程式碼、文檔、圖片、LaTeX）
+3. ✅ 建立自動化commit/push機制
+4. ✅ 測試提交流程正常運作
+
+**下次開啟對話時**：直接在 `D:\mywork\99times` 工作，享受自動化版本控制！
