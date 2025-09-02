@@ -168,7 +168,10 @@ class MultiplicationApp {
             const currentValue = e.target.value;
             // 當輸入2位數或1位數時，延遲自動檢查
             if (currentValue.length >= 1 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
-                const delay = currentValue.length === 1 ? 600 : 300; // 1位數600ms，2位數300ms
+                // 依裝置類型設定不同延遲時間
+                const delay = this.isDesktop 
+                    ? (currentValue.length === 1 ? 600 : 300)  // 桌面：1位數600ms，2位數300ms
+                    : (currentValue.length === 1 ? 800 : 400); // 觸控：1位數800ms，2位數400ms
                 setTimeout(() => {
                     // 再次檢查是否還在處理中，以及輸入值是否改變
                     if (!this.isProcessingAnswer && answerInput.value === currentValue) {
@@ -223,7 +226,8 @@ class MultiplicationApp {
                     // 恢復自動檢查功能，但有防護機制
                     const currentValue = answerInput.value;
                     if (currentValue.length > 0 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
-                        const delay = currentValue.length === 1 ? 600 : 300; // 與鍵盤輸入相同時間
+                        // 觸控裝置延遲時間（虛擬鍵盤專用）
+                        const delay = currentValue.length === 1 ? 800 : 400;
                         setTimeout(() => {
                             // 再次檢查是否還在處理中，以及輸入值是否改變
                             if (!this.isProcessingAnswer && answerInput.value === currentValue) {
