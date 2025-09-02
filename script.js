@@ -92,7 +92,7 @@ class MultiplicationApp {
 
         // 隱藏開始頁面，顯示練習頁面
         document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('practice-screen').style.display = 'flex';
+        document.getElementById('practice-screen').style.display = 'block';
 
         // 根據設定顯示或隱藏計時器
         const timerContainer = document.querySelector('.timer-container');
