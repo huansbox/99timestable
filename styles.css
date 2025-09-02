@@ -45,28 +45,34 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.5;
-    overflow-x: hidden;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
     /* 禁用iOS彈跳效果 */
     -webkit-overflow-scrolling: touch;
 }
 
 /* 主容器 */
 .app-container {
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     display: flex;
     flex-direction: column;
     max-width: 768px;
     margin: 0 auto;
     padding: var(--spacing-s);
+    overflow: hidden;
 }
 
 /* 開始設定頁面 */
 .start-screen {
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-l);
+    overflow: hidden;
 }
 
 .start-content {
@@ -239,11 +245,13 @@ body {
 
 /* 歷史記錄頁面 */
 .records-screen {
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-l);
+    overflow: hidden;
 }
 
 .records-content {
