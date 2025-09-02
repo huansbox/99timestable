@@ -237,9 +237,27 @@ class MultiplicationApp {
         const viewRecordsBtn = document.getElementById('view-records');
         const backFromRecordsBtn = document.getElementById('back-from-records');
         
-        startBtn.addEventListener('click', () => this.startPractice());
-        viewRecordsBtn.addEventListener('click', () => this.showRecords());
-        backFromRecordsBtn.addEventListener('click', () => this.backToStart());
+        // 使用更強的事件綁定，包含觸控事件
+        startBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.startPractice();
+        });
+        
+        viewRecordsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showRecords();
+        });
+        
+        // 返回按鈕使用多種事件類型確保在iPad上工作
+        backFromRecordsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.backToStart();
+        });
+        
+        backFromRecordsBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.backToStart();
+        });
     }
 
     // 顯示歷史記錄頁面
