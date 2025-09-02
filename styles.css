@@ -1,0 +1,468 @@
+/* 九九乘法表練習 - iPad優化CSS樣式 */
+
+/* 基礎重置和變數定義 */
+:root {
+    /* 顏色主題 - 兒童友善 */
+    --primary-color: #4285f4;
+    --success-color: #34a853;
+    --error-color: #ea4335;
+    --warning-color: #fbbc04;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+    --text-secondary: #5f6368;
+    --border-color: #dadce0;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    
+    /* 字體大小 - 適合8歲兒童 */
+    --font-size-title: 2rem;
+    --font-size-question: 2.5rem;
+    --font-size-input: 2rem;
+    --font-size-button: 1.5rem;
+    --font-size-progress: 1.2rem;
+    
+    /* 間距 */
+    --spacing-xs: 0.5rem;
+    --spacing-s: 1rem;
+    --spacing-m: 1.5rem;
+    --spacing-l: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* 觸控目標大小 */
+    --touch-target: 60px;
+    --touch-target-large: 80px;
+}
+
+/* 全域樣式 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'PingFang TC', 'Noto Sans CJK TC', 'Microsoft JhengHei', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    overflow-x: hidden;
+    /* 禁用iOS彈跳效果 */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 主容器 */
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 768px;
+    margin: 0 auto;
+    padding: var(--spacing-s);
+}
+
+/* 練習容器 */
+.practice-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: var(--spacing-m);
+}
+
+/* 標頭區域 */
+.header {
+    background: var(--card-bg);
+    padding: var(--spacing-m);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.title {
+    font-size: var(--font-size-title);
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: var(--spacing-s);
+}
+
+.timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.timer-label {
+    font-size: var(--font-size-progress);
+    color: var(--text-secondary);
+}
+
+.timer {
+    font-size: var(--font-size-progress);
+    font-weight: 600;
+    color: var(--primary-color);
+    font-family: 'SF Mono', 'Monaco', monospace;
+}
+
+/* 進度條 */
+.progress-container {
+    background: var(--card-bg);
+    padding: var(--spacing-m);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-s);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 2%; /* 初始值：1/50 */
+}
+
+.progress-text {
+    text-align: center;
+    font-size: var(--font-size-progress);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* 題目區域 */
+.question-container {
+    flex: 1;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-l);
+    text-align: center;
+}
+
+.question {
+    font-size: var(--font-size-question);
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-m);
+}
+
+.answer-blank {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    padding: 0 var(--spacing-s);
+    display: inline-block;
+    min-width: 60px;
+}
+
+/* 回饋訊息 */
+.feedback {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    padding: var(--spacing-s);
+    border-radius: 12px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.feedback.correct {
+    background-color: rgba(52, 168, 83, 0.1);
+    color: var(--success-color);
+    border: 2px solid var(--success-color);
+}
+
+.feedback.incorrect {
+    background-color: rgba(234, 67, 53, 0.1);
+    color: var(--error-color);
+    border: 2px solid var(--error-color);
+}
+
+/* 答案輸入區 */
+.answer-container {
+    display: flex;
+    gap: var(--spacing-m);
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.answer-input {
+    flex: 1;
+    font-size: var(--font-size-input);
+    padding: var(--spacing-m);
+    border: 3px solid var(--border-color);
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    background: #ffffff;
+    color: var(--text-color);
+    caret-color: var(--primary-color);
+    
+    /* iOS樣式重置 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.answer-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+}
+
+.submit-btn {
+    font-size: var(--font-size-button);
+    padding: var(--spacing-m) var(--spacing-l);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: var(--touch-target-large);
+    height: var(--touch-target-large);
+    
+    /* iOS按鈕樣式重置 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.submit-btn:hover {
+    background: #3367d6;
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+    background: #2851a3;
+}
+
+/* 虛擬數字鍵盤 */
+.number-pad {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: var(--spacing-m);
+    gap: var(--spacing-s);
+    display: flex;
+    flex-direction: column;
+}
+
+.number-row {
+    display: flex;
+    gap: var(--spacing-s);
+    justify-content: center;
+}
+
+.number-btn {
+    width: var(--touch-target-large);
+    height: var(--touch-target-large);
+    font-size: var(--font-size-button);
+    font-weight: 600;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: #ffffff;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    /* iOS按鈕樣式重置 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.number-btn:hover {
+    background: var(--bg-color);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.number-btn:active {
+    transform: translateY(0);
+    background: var(--primary-color);
+    color: white;
+}
+
+.clear-btn {
+    background: rgba(234, 67, 53, 0.1);
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+.backspace-btn {
+    background: rgba(251, 188, 4, 0.1);
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+/* 操作提示 */
+.hint-container {
+    text-align: center;
+    padding: var(--spacing-s);
+}
+
+.hint {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* 完成頁面樣式 */
+.completion {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    margin: var(--spacing-l);
+}
+
+.completion h1 {
+    font-size: 2.5rem;
+    color: var(--success-color);
+    margin-bottom: var(--spacing-l);
+}
+
+.completion-stats {
+    background: rgba(52, 168, 83, 0.1);
+    border-radius: 12px;
+    padding: var(--spacing-l);
+    margin: var(--spacing-l) 0;
+}
+
+.completion-stats p {
+    font-size: 1.3rem;
+    margin: var(--spacing-s) 0;
+    color: var(--text-color);
+}
+
+.completion-stats strong {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.restart-btn {
+    font-size: var(--font-size-button);
+    padding: var(--spacing-m) var(--spacing-xl);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: var(--spacing-m);
+}
+
+.restart-btn:hover {
+    background: #3367d6;
+    transform: translateY(-1px);
+}
+
+/* 響應式設計 - iPad橫向模式 */
+@media screen and (orientation: landscape) and (min-width: 768px) {
+    .practice-container {
+        flex-direction: row;
+        gap: var(--spacing-l);
+        height: 100vh;
+        padding: var(--spacing-m);
+    }
+    
+    .header {
+        order: 1;
+        flex: 0 0 200px;
+    }
+    
+    .progress-container {
+        order: 2;
+        flex: 0 0 180px;
+    }
+    
+    .question-container {
+        order: 3;
+        flex: 1;
+        max-width: none;
+    }
+    
+    .number-pad {
+        order: 4;
+        flex: 0 0 280px;
+        justify-content: center;
+    }
+    
+    .hint-container {
+        order: 5;
+        flex: 0 0 auto;
+        display: none; /* 橫向模式隱藏提示 */
+    }
+}
+
+/* 針對更大的iPad Pro */
+@media screen and (min-width: 1024px) {
+    :root {
+        --font-size-question: 3rem;
+        --font-size-input: 2.5rem;
+        --touch-target-large: 100px;
+    }
+}
+
+/* 深色模式支援 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1a1a1a;
+        --card-bg: #2d2d2d;
+        --text-color: #ffffff;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+    }
+    
+    .answer-input {
+        background: var(--card-bg);
+    }
+    
+    .number-btn {
+        background: var(--card-bg);
+    }
+}
+
+/* 動畫效果 */
+@keyframes bounce {
+    0%, 20%, 60%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    80% {
+        transform: translateY(-5px);
+    }
+}
+
+.feedback.correct {
+    animation: bounce 0.6s ease;
+}
+
+/* 確保觸控區域足夠大 */
+@media (pointer: coarse) {
+    .number-btn, .submit-btn {
+        min-height: var(--touch-target-large);
+        min-width: var(--touch-target-large);
+    }
+}

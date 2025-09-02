@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>九九乘法表練習</title>
+    <meta name="description" content="互動式九九乘法表練習，專為iPad優化設計">
+    
+    <!-- iOS優化 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="九九乘法表">
+    
+    <!-- 防止縮放和選擇 -->
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        input {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- 練習頁面 -->
+        <div class="practice-container">
+            <!-- 標頭區域 -->
+            <header class="header">
+                <h1 class="title">九九乘法表練習</h1>
+                <div class="timer-container">
+                    <span class="timer-label">我花了</span>
+                    <span id="timer" class="timer">0 分 0 秒</span>
+                </div>
+            </header>
+
+            <!-- 進度條 -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="progress" class="progress-text">第 1 題 / 共 50 題</div>
+            </div>
+
+            <!-- 題目區域 -->
+            <main class="question-container">
+                <div id="question" class="question">
+                    載入中...
+                </div>
+                
+                <!-- 回饋訊息 -->
+                <div id="feedback" class="feedback"></div>
+                
+                <!-- 答案輸入區 -->
+                <div class="answer-container">
+                    <input 
+                        type="number" 
+                        id="answer-input" 
+                        class="answer-input" 
+                        placeholder="輸入答案"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        autocomplete="off"
+                        readonly
+                    >
+                    <button id="submit-btn" class="submit-btn">確認</button>
+                </div>
+            </main>
+
+            <!-- 虛擬數字鍵盤 -->
+            <div id="number-pad" class="number-pad">
+                <div class="number-row">
+                    <button class="number-btn">7</button>
+                    <button class="number-btn">8</button>
+                    <button class="number-btn">9</button>
+                </div>
+                <div class="number-row">
+                    <button class="number-btn">4</button>
+                    <button class="number-btn">5</button>
+                    <button class="number-btn">6</button>
+                </div>
+                <div class="number-row">
+                    <button class="number-btn">1</button>
+                    <button class="number-btn">2</button>
+                    <button class="number-btn">3</button>
+                </div>
+                <div class="number-row">
+                    <button class="number-btn clear-btn">C</button>
+                    <button class="number-btn">0</button>
+                    <button class="number-btn backspace-btn">⌫</button>
+                </div>
+            </div>
+
+            <!-- 操作提示 -->
+            <div class="hint-container">
+                <p class="hint">💡 點擊數字鍵盤輸入答案，答對後會自動進入下一題</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
