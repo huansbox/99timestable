@@ -1,63 +1,171 @@
-// 九九乘法表練習 - 題目數據和邏輯
-// 基於LaTeX版本的50道題目
+// 九九乘法表練習 - 完整題庫
+// 包含2×2到9×9的所有組合，結果類型和因數類型各64題，共128題
 
 const questions = [
-    // 第一欄（1-16題）
-    { id: 1, num1: 9, num2: 3, answer: 27, type: 'result' },      // 9 × 3 = (?)
-    { id: 2, num1: 7, num2: 2, answer: 14, type: 'result' },      // 7 × 2 = (?)
-    { id: 3, num1: 8, num2: 4, answer: 32, type: 'result' },      // 8 × 4 = (?)
-    { id: 4, num1: 6, num2: 3, answer: 18, type: 'result' },      // 6 × 3 = (?)
-    { id: 5, num1: 4, num2: 4, answer: 16, type: 'result' },      // 4 × 4 = (?)
-    { id: 6, num1: 9, num2: 4, answer: 4, type: 'factor', result: 36 },       // 9 × (?) = 36
-    { id: 7, num1: 6, num2: 7, answer: 42, type: 'result' },      // 6 × 7 = (?)
-    { id: 8, num1: 7, num2: 8, answer: 56, type: 'result' },      // 7 × 8 = (?)
-    { id: 9, num1: 8, num2: 9, answer: 72, type: 'result' },      // 8 × 9 = (?)
-    { id: 10, num1: 5, num2: 4, answer: 20, type: 'result' },     // 5 × 4 = (?)
-    { id: 11, num1: 9, num2: 7, answer: 63, type: 'result' },     // 9 × 7 = (?)
-    { id: 12, num1: 4, num2: 7, answer: 7, type: 'factor', result: 28 },      // 4 × (?) = 28
-    { id: 13, num1: 8, num2: 3, answer: 24, type: 'result' },     // 8 × 3 = (?)
-    { id: 14, num1: 2, num2: 9, answer: 9, type: 'factor', result: 18 },      // 2 × (?) = 18
-    { id: 15, num1: 7, num2: 5, answer: 35, type: 'result' },     // 7 × 5 = (?)
-    { id: 16, num1: 9, num2: 8, answer: 8, type: 'factor', result: 72 },      // 9 × (?) = 72
-
-    // 第二欄（17-33題）
-    { id: 17, num1: 6, num2: 5, answer: 30, type: 'result' },     // 6 × 5 = (?)
-    { id: 18, num1: 8, num2: 5, answer: 5, type: 'factor', result: 40 },      // 8 × (?) = 40
-    { id: 19, num1: 7, num2: 9, answer: 63, type: 'result' },     // 7 × 9 = (?)
-    { id: 20, num1: 6, num2: 8, answer: 48, type: 'result' },     // 6 × 8 = (?)
-    { id: 21, num1: 9, num2: 4, answer: 36, type: 'result' },     // 9 × 4 = (?)
-    { id: 22, num1: 5, num2: 3, answer: 15, type: 'result' },     // 5 × 3 = (?)
-    { id: 23, num1: 8, num2: 8, answer: 64, type: 'result' },     // 8 × 8 = (?)
-    { id: 24, num1: 3, num2: 8, answer: 8, type: 'factor', result: 24 },      // 3 × (?) = 24
-    { id: 25, num1: 8, num2: 4, answer: 4, type: 'factor', result: 32 },      // 8 × (?) = 32
-    { id: 26, num1: 9, num2: 6, answer: 54, type: 'result' },     // 9 × 6 = (?)
-    { id: 27, num1: 4, num2: 3, answer: 12, type: 'result' },     // 4 × 3 = (?)
-    { id: 28, num1: 7, num2: 7, answer: 49, type: 'result' },     // 7 × 7 = (?)
-    { id: 29, num1: 8, num2: 6, answer: 48, type: 'result' },     // 8 × 6 = (?)
-    { id: 30, num1: 5, num2: 9, answer: 9, type: 'factor', result: 45 },      // 5 × (?) = 45
-    { id: 31, num1: 9, num2: 9, answer: 81, type: 'result' },     // 9 × 9 = (?)
-    { id: 32, num1: 5, num2: 2, answer: 10, type: 'result' },     // 5 × 2 = (?)
-    { id: 33, num1: 8, num2: 2, answer: 16, type: 'result' },     // 8 × 2 = (?)
-
-    // 第三欄（34-50題）
-    { id: 34, num1: 6, num2: 6, answer: 36, type: 'result' },     // 6 × 6 = (?)
-    { id: 35, num1: 7, num2: 7, answer: 7, type: 'factor', result: 49 },      // 7 × (?) = 49
-    { id: 36, num1: 9, num2: 3, answer: 3, type: 'factor', result: 27 },      // 9 × (?) = 27
-    { id: 37, num1: 7, num2: 4, answer: 28, type: 'result' },     // 7 × 4 = (?)
-    { id: 38, num1: 7, num2: 6, answer: 42, type: 'result' },     // 7 × 6 = (?)
-    { id: 39, num1: 6, num2: 4, answer: 24, type: 'result' },     // 6 × 4 = (?)
-    { id: 40, num1: 9, num2: 5, answer: 45, type: 'result' },     // 9 × 5 = (?)
-    { id: 41, num1: 5, num2: 5, answer: 25, type: 'result' },     // 5 × 5 = (?)
-    { id: 42, num1: 6, num2: 9, answer: 54, type: 'result' },     // 6 × 9 = (?)
-    { id: 43, num1: 8, num2: 7, answer: 56, type: 'result' },     // 8 × 7 = (?)
-    { id: 44, num1: 9, num2: 8, answer: 72, type: 'result' },     // 9 × 8 = (?)
-    { id: 45, num1: 4, num2: 2, answer: 8, type: 'result' },      // 4 × 2 = (?)
-    { id: 46, num1: 8, num2: 7, answer: 7, type: 'factor', result: 56 },      // 8 × (?) = 56
-    { id: 47, num1: 6, num2: 2, answer: 12, type: 'result' },     // 6 × 2 = (?)
-    { id: 48, num1: 9, num2: 2, answer: 18, type: 'result' },     // 9 × 2 = (?)
-    { id: 49, num1: 7, num2: 3, answer: 21, type: 'result' },     // 7 × 3 = (?)
-    { id: 50, num1: 8, num2: 5, answer: 40, type: 'result' }      // 8 × 5 = (?)
-];
+    // === 結果類型題目：a × b = (?) ===
+    
+    // 2的乘法
+    { id: 1, num1: 2, num2: 2, answer: 4, type: 'result' },
+    { id: 2, num1: 2, num2: 3, answer: 6, type: 'result' },
+    { id: 3, num1: 2, num2: 4, answer: 8, type: 'result' },
+    { id: 4, num1: 2, num2: 5, answer: 10, type: 'result' },
+    { id: 5, num1: 2, num2: 6, answer: 12, type: 'result' },
+    { id: 6, num1: 2, num2: 7, answer: 14, type: 'result' },
+    { id: 7, num1: 2, num2: 8, answer: 16, type: 'result' },
+    { id: 8, num1: 2, num2: 9, answer: 18, type: 'result' },
+    
+    // 3的乘法
+    { id: 9, num1: 3, num2: 2, answer: 6, type: 'result' },
+    { id: 10, num1: 3, num2: 3, answer: 9, type: 'result' },
+    { id: 11, num1: 3, num2: 4, answer: 12, type: 'result' },
+    { id: 12, num1: 3, num2: 5, answer: 15, type: 'result' },
+    { id: 13, num1: 3, num2: 6, answer: 18, type: 'result' },
+    { id: 14, num1: 3, num2: 7, answer: 21, type: 'result' },
+    { id: 15, num1: 3, num2: 8, answer: 24, type: 'result' },
+    { id: 16, num1: 3, num2: 9, answer: 27, type: 'result' },
+    
+    // 4的乘法
+    { id: 17, num1: 4, num2: 2, answer: 8, type: 'result' },
+    { id: 18, num1: 4, num2: 3, answer: 12, type: 'result' },
+    { id: 19, num1: 4, num2: 4, answer: 16, type: 'result' },
+    { id: 20, num1: 4, num2: 5, answer: 20, type: 'result' },
+    { id: 21, num1: 4, num2: 6, answer: 24, type: 'result' },
+    { id: 22, num1: 4, num2: 7, answer: 28, type: 'result' },
+    { id: 23, num1: 4, num2: 8, answer: 32, type: 'result' },
+    { id: 24, num1: 4, num2: 9, answer: 36, type: 'result' },
+    
+    // 5的乘法
+    { id: 25, num1: 5, num2: 2, answer: 10, type: 'result' },
+    { id: 26, num1: 5, num2: 3, answer: 15, type: 'result' },
+    { id: 27, num1: 5, num2: 4, answer: 20, type: 'result' },
+    { id: 28, num1: 5, num2: 5, answer: 25, type: 'result' },
+    { id: 29, num1: 5, num2: 6, answer: 30, type: 'result' },
+    { id: 30, num1: 5, num2: 7, answer: 35, type: 'result' },
+    { id: 31, num1: 5, num2: 8, answer: 40, type: 'result' },
+    { id: 32, num1: 5, num2: 9, answer: 45, type: 'result' },
+    
+    // 6的乘法
+    { id: 33, num1: 6, num2: 2, answer: 12, type: 'result' },
+    { id: 34, num1: 6, num2: 3, answer: 18, type: 'result' },
+    { id: 35, num1: 6, num2: 4, answer: 24, type: 'result' },
+    { id: 36, num1: 6, num2: 5, answer: 30, type: 'result' },
+    { id: 37, num1: 6, num2: 6, answer: 36, type: 'result' },
+    { id: 38, num1: 6, num2: 7, answer: 42, type: 'result' },
+    { id: 39, num1: 6, num2: 8, answer: 48, type: 'result' },
+    { id: 40, num1: 6, num2: 9, answer: 54, type: 'result' },
+    
+    // 7的乘法
+    { id: 41, num1: 7, num2: 2, answer: 14, type: 'result' },
+    { id: 42, num1: 7, num2: 3, answer: 21, type: 'result' },
+    { id: 43, num1: 7, num2: 4, answer: 28, type: 'result' },
+    { id: 44, num1: 7, num2: 5, answer: 35, type: 'result' },
+    { id: 45, num1: 7, num2: 6, answer: 42, type: 'result' },
+    { id: 46, num1: 7, num2: 7, answer: 49, type: 'result' },
+    { id: 47, num1: 7, num2: 8, answer: 56, type: 'result' },
+    { id: 48, num1: 7, num2: 9, answer: 63, type: 'result' },
+    
+    // 8的乘法
+    { id: 49, num1: 8, num2: 2, answer: 16, type: 'result' },
+    { id: 50, num1: 8, num2: 3, answer: 24, type: 'result' },
+    { id: 51, num1: 8, num2: 4, answer: 32, type: 'result' },
+    { id: 52, num1: 8, num2: 5, answer: 40, type: 'result' },
+    { id: 53, num1: 8, num2: 6, answer: 48, type: 'result' },
+    { id: 54, num1: 8, num2: 7, answer: 56, type: 'result' },
+    { id: 55, num1: 8, num2: 8, answer: 64, type: 'result' },
+    { id: 56, num1: 8, num2: 9, answer: 72, type: 'result' },
+    
+    // 9的乘法
+    { id: 57, num1: 9, num2: 2, answer: 18, type: 'result' },
+    { id: 58, num1: 9, num2: 3, answer: 27, type: 'result' },
+    { id: 59, num1: 9, num2: 4, answer: 36, type: 'result' },
+    { id: 60, num1: 9, num2: 5, answer: 45, type: 'result' },
+    { id: 61, num1: 9, num2: 6, answer: 54, type: 'result' },
+    { id: 62, num1: 9, num2: 7, answer: 63, type: 'result' },
+    { id: 63, num1: 9, num2: 8, answer: 72, type: 'result' },
+    { id: 64, num1: 9, num2: 9, answer: 81, type: 'result' },
+    
+    // === 因數類型題目：a × (?) = result ===
+    
+    // 2的因數題
+    { id: 65, num1: 2, num2: 2, answer: 2, type: 'factor', result: 4 },
+    { id: 66, num1: 2, num2: 3, answer: 3, type: 'factor', result: 6 },
+    { id: 67, num1: 2, num2: 4, answer: 4, type: 'factor', result: 8 },
+    { id: 68, num1: 2, num2: 5, answer: 5, type: 'factor', result: 10 },
+    { id: 69, num1: 2, num2: 6, answer: 6, type: 'factor', result: 12 },
+    { id: 70, num1: 2, num2: 7, answer: 7, type: 'factor', result: 14 },
+    { id: 71, num1: 2, num2: 8, answer: 8, type: 'factor', result: 16 },
+    { id: 72, num1: 2, num2: 9, answer: 9, type: 'factor', result: 18 },
+    
+    // 3的因數題
+    { id: 73, num1: 3, num2: 2, answer: 2, type: 'factor', result: 6 },
+    { id: 74, num1: 3, num2: 3, answer: 3, type: 'factor', result: 9 },
+    { id: 75, num1: 3, num2: 4, answer: 4, type: 'factor', result: 12 },
+    { id: 76, num1: 3, num2: 5, answer: 5, type: 'factor', result: 15 },
+    { id: 77, num1: 3, num2: 6, answer: 6, type: 'factor', result: 18 },
+    { id: 78, num1: 3, num2: 7, answer: 7, type: 'factor', result: 21 },
+    { id: 79, num1: 3, num2: 8, answer: 8, type: 'factor', result: 24 },
+    { id: 80, num1: 3, num2: 9, answer: 9, type: 'factor', result: 27 },
+    
+    // 4的因數題
+    { id: 81, num1: 4, num2: 2, answer: 2, type: 'factor', result: 8 },
+    { id: 82, num1: 4, num2: 3, answer: 3, type: 'factor', result: 12 },
+    { id: 83, num1: 4, num2: 4, answer: 4, type: 'factor', result: 16 },
+    { id: 84, num1: 4, num2: 5, answer: 5, type: 'factor', result: 20 },
+    { id: 85, num1: 4, num2: 6, answer: 6, type: 'factor', result: 24 },
+    { id: 86, num1: 4, num2: 7, answer: 7, type: 'factor', result: 28 },
+    { id: 87, num1: 4, num2: 8, answer: 8, type: 'factor', result: 32 },
+    { id: 88, num1: 4, num2: 9, answer: 9, type: 'factor', result: 36 },
+    
+    // 5的因數題
+    { id: 89, num1: 5, num2: 2, answer: 2, type: 'factor', result: 10 },
+    { id: 90, num1: 5, num2: 3, answer: 3, type: 'factor', result: 15 },
+    { id: 91, num1: 5, num2: 4, answer: 4, type: 'factor', result: 20 },
+    { id: 92, num1: 5, num2: 5, answer: 5, type: 'factor', result: 25 },
+    { id: 93, num1: 5, num2: 6, answer: 6, type: 'factor', result: 30 },
+    { id: 94, num1: 5, num2: 7, answer: 7, type: 'factor', result: 35 },
+    { id: 95, num1: 5, num2: 8, answer: 8, type: 'factor', result: 40 },
+    { id: 96, num1: 5, num2: 9, answer: 9, type: 'factor', result: 45 },
+    
+    // 6的因數題
+    { id: 97, num1: 6, num2: 2, answer: 2, type: 'factor', result: 12 },
+    { id: 98, num1: 6, num2: 3, answer: 3, type: 'factor', result: 18 },
+    { id: 99, num1: 6, num2: 4, answer: 4, type: 'factor', result: 24 },
+    { id: 100, num1: 6, num2: 5, answer: 5, type: 'factor', result: 30 },
+    { id: 101, num1: 6, num2: 6, answer: 6, type: 'factor', result: 36 },
+    { id: 102, num1: 6, num2: 7, answer: 7, type: 'factor', result: 42 },
+    { id: 103, num1: 6, num2: 8, answer: 8, type: 'factor', result: 48 },
+    { id: 104, num1: 6, num2: 9, answer: 9, type: 'factor', result: 54 },
+    
+    // 7的因數題
+    { id: 105, num1: 7, num2: 2, answer: 2, type: 'factor', result: 14 },
+    { id: 106, num1: 7, num2: 3, answer: 3, type: 'factor', result: 21 },
+    { id: 107, num1: 7, num2: 4, answer: 4, type: 'factor', result: 28 },
+    { id: 108, num1: 7, num2: 5, answer: 5, type: 'factor', result: 35 },
+    { id: 109, num1: 7, num2: 6, answer: 6, type: 'factor', result: 42 },
+    { id: 110, num1: 7, num2: 7, answer: 7, type: 'factor', result: 49 },
+    { id: 111, num1: 7, num2: 8, answer: 8, type: 'factor', result: 56 },
+    { id: 112, num1: 7, num2: 9, answer: 9, type: 'factor', result: 63 },
+    
+    // 8的因數題
+    { id: 113, num1: 8, num2: 2, answer: 2, type: 'factor', result: 16 },
+    { id: 114, num1: 8, num2: 3, answer: 3, type: 'factor', result: 24 },
+    { id: 115, num1: 8, num2: 4, answer: 4, type: 'factor', result: 32 },
+    { id: 116, num1: 8, num2: 5, answer: 5, type: 'factor', result: 40 },
+    { id: 117, num1: 8, num2: 6, answer: 6, type: 'factor', result: 48 },
+    { id: 118, num1: 8, num2: 7, answer: 7, type: 'factor', result: 56 },
+    { id: 119, num1: 8, num2: 8, answer: 8, type: 'factor', result: 64 },
+    { id: 120, num1: 8, num2: 9, answer: 9, type: 'factor', result: 72 },
+    
+    // 9的因數題
+    { id: 121, num1: 9, num2: 2, answer: 2, type: 'factor', result: 18 },
+    { id: 122, num1: 9, num2: 3, answer: 3, type: 'factor', result: 27 },
+    { id: 123, num1: 9, num2: 4, answer: 4, type: 'factor', result: 36 },
+    { id: 124, num1: 9, num2: 5, answer: 5, type: 'factor', result: 45 },
+    { id: 125, num1: 9, num2: 6, answer: 6, type: 'factor', result: 54 },
+    { id: 126, num1: 9, num2: 7, answer: 7, type: 'factor', result: 63 },
+    { id: 127, num1: 9, num2: 8, answer: 8, type: 'factor', result: 72 },
+    { id: 128, num1: 9, num2: 9, answer: 9, type: 'factor', result: 81 }
+].sort(() => Math.random() - 0.5); // 隨機打亂題目順序
 
 // 應用程式狀態
 class MultiplicationApp {
@@ -69,7 +177,7 @@ class MultiplicationApp {
         this.timerInterval = null;
         this.isProcessingAnswer = false; // 防止重複處理答案
         this.showTimer = true; // 是否顯示計時器
-        this.questionCount = 50; // 題目數量
+        this.questionCount = 128; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
         this.initStartScreen();
     }
