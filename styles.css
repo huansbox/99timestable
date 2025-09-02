@@ -593,13 +593,12 @@ body {
     
     .practice-container {
         display: grid;
-        grid-template-columns: 1.4fr 0.6fr;
+        grid-template-columns: 2fr 1fr;
         grid-template-rows: auto auto 1fr;
-        gap: var(--spacing-s);
+        gap: var(--spacing-l);
         height: 100vh;
         max-height: 100vh;
-        padding: var(--spacing-s);
-        align-items: start;
+        padding: var(--spacing-m);
     }
     
     .header {
@@ -615,11 +614,10 @@ body {
     .question-container {
         grid-column: 1;
         grid-row: 3;
-        padding: var(--spacing-l);
+        padding: var(--spacing-xl);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-self: center;
     }
     
     /* iPad橫向模式答案輸入框優化 */
@@ -635,21 +633,22 @@ body {
         text-align: center;
     }
     
-    /* 將提示放在題目區域內 */
-    .hint-container {
-        margin-top: var(--spacing-m);
-        padding: var(--spacing-xs);
+    /* iPad橫向模式的答案提示 */
+    .answer-hint {
+        margin-top: var(--spacing-s);
+        text-align: center;
     }
     
-    .hint {
-        font-size: 0.9rem;
+    .answer-hint .hint {
+        font-size: 0.85rem;
         color: var(--text-secondary);
         margin: 0;
+        font-style: italic;
     }
     
     .number-pad {
-        grid-column: 2;
-        grid-row: 3;
+        grid-column: 2 !important;
+        grid-row: 3 !important;
         display: flex !important;
         flex-direction: column;
         justify-content: center;
@@ -662,6 +661,8 @@ body {
         /* 確保在iPad橫式模式顯示虛擬鍵盤 */
         visibility: visible !important;
         opacity: 1 !important;
+        position: relative;
+        z-index: 1;
     }
     
     .number-btn {
