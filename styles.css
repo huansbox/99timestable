@@ -377,7 +377,7 @@ body {
 }
 
 /* iPad橫向模式 - 題目左側，虛擬鍵盤右側 */
-@media screen and (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
+@media screen and (orientation: landscape) and (min-width: 768px) and (pointer: coarse) {
     .app-container {
         padding: var(--spacing-s);
     }
@@ -418,6 +418,19 @@ body {
         justify-content: center;
         padding: var(--spacing-m);
         gap: var(--spacing-s);
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        /* 確保在iPad橫式模式顯示虛擬鍵盤 */
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .number-btn {
+        width: var(--touch-target-large);
+        height: var(--touch-target-large);
+        font-size: var(--font-size-button);
+        margin: 2px;
     }
     
     .hint-container {
@@ -427,7 +440,7 @@ body {
 }
 
 /* iPad直向模式 - 保持原有直向佈局但確保虛擬鍵盤可用 */
-@media screen and (orientation: portrait) and (min-width: 768px) and (max-width: 1023px) {
+@media screen and (orientation: portrait) and (min-width: 768px) and (pointer: coarse) {
     .practice-container {
         display: flex;
         flex-direction: column;
@@ -575,7 +588,7 @@ body {
         justify-content: center;
     }
     
-    /* 桌面版隱藏虛擬鍵盤 */
+    /* 桌面版隱藏虛擬鍵盤 - 只在真正的桌面裝置隱藏 */
     .number-pad {
         display: none !important;
     }
