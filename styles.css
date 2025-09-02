@@ -45,30 +45,19 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.5;
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    /* 禁用iOS彈跳效果和過度滾動 */
+    /* 恢復正常滾動，只在特定頁面限制 */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
-    position: fixed;
-    width: 100%;
 }
 
 /* 主容器 */
 .app-container {
-    height: 100vh;
-    max-height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     max-width: 768px;
     margin: 0 auto;
     padding: var(--spacing-s);
-    overflow: hidden;
-    /* 額外的iPad滾動防護 */
-    overscroll-behavior: none;
-    -webkit-overflow-scrolling: auto;
-    position: relative;
 }
 
 /* 開始設定頁面 */
@@ -80,6 +69,14 @@ body {
     justify-content: center;
     padding: var(--spacing-l);
     overflow: hidden;
+    /* 只在開始頁面防止滾動洩漏 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: var(--bg-color);
 }
 
 .start-content {
@@ -265,6 +262,14 @@ body {
     justify-content: center;
     padding: var(--spacing-l);
     overflow: hidden;
+    /* 只在記錄頁面防止滾動洩漏 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: var(--bg-color);
 }
 
 .records-content {
