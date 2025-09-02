@@ -167,6 +167,55 @@ const questions = [
     { id: 128, num1: 9, num2: 9, answer: 9, type: 'factor', result: 81 }
 ]; // 完整題庫，不在這裡打亂，而是在選題時隨機選取
 
+// 練習記錄管理類
+class PracticeRecords {
+    constructor() {
+        this.storageKey = 'multiplication-practice-records';
+        this.maxRecords = 20;
+    }
+
+    // 獲取所有記錄
+    getRecords() {
+        const records = localStorage.getItem(this.storageKey);
+        return records ? JSON.parse(records) : [];
+    }
+
+    // 保存記錄
+    saveRecord(record) {
+        const records = this.getRecords();
+        records.unshift(record); // 新記錄加在前面
+
+        // 限制最多20筆記錄
+        if (records.length > this.maxRecords) {
+            records.splice(this.maxRecords);
+        }
+
+        localStorage.setItem(this.storageKey, JSON.stringify(records));
+    }
+
+    // 獲取相同題數的最近記錄（用於比較進步）
+    getLastRecordWithSameQuestionCount(questionCount) {
+        const records = this.getRecords();
+        return records.find(record => record.questionCount === questionCount);
+    }
+
+    // 格式化時間顯示
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return minutes > 0 ? `${minutes}分${secs}秒` : `${secs}秒`;
+    }
+
+    // 格式化日期時間
+    formatDateTime(date) {
+        const d = new Date(date);
+        return {
+            date: `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`,
+            time: `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+        };
+    }
+}
+
 // 應用程式狀態
 class MultiplicationApp {
     constructor() {
@@ -179,12 +228,57 @@ class MultiplicationApp {
         this.showTimer = true; // 是否顯示計時器
         this.questionCount = 10; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
+        this.practiceRecords = new PracticeRecords(); // 記錄管理
         this.initStartScreen();
     }
 
     initStartScreen() {
         const startBtn = document.getElementById('start-practice');
+        const viewRecordsBtn = document.getElementById('view-records');
+        const backFromRecordsBtn = document.getElementById('back-from-records');
+        
         startBtn.addEventListener('click', () => this.startPractice());
+        viewRecordsBtn.addEventListener('click', () => this.showRecords());
+        backFromRecordsBtn.addEventListener('click', () => this.backToStart());
+    }
+
+    // 顯示歷史記錄頁面
+    showRecords() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('records-screen').style.display = 'flex';
+        this.loadRecords();
+    }
+
+    // 返回開始頁面
+    backToStart() {
+        document.getElementById('records-screen').style.display = 'none';
+        document.getElementById('start-screen').style.display = 'flex';
+    }
+
+    // 載入記錄列表
+    loadRecords() {
+        const records = this.practiceRecords.getRecords();
+        const recordsList = document.getElementById('records-list');
+        
+        if (records.length === 0) {
+            recordsList.innerHTML = '<div class="no-records">還沒有練習記錄，開始第一次練習吧！</div>';
+            return;
+        }
+        
+        const recordsHTML = records.slice(0, 10).map(record => {
+            const { date, time } = this.practiceRecords.formatDateTime(record.date + ' ' + record.startTime);
+            return `
+                <div class="record-item">
+                    <div class="record-info">
+                        <div class="record-datetime">${date} ${record.startTime}</div>
+                        <div class="record-details">${record.questionCount}題</div>
+                    </div>
+                    <div class="record-time">${this.practiceRecords.formatTime(record.totalTime)}</div>
+                </div>
+            `;
+        }).join('');
+        
+        recordsList.innerHTML = recordsHTML;
     }
 
     // 從完整題庫中隨機選取指定數量的題目
@@ -481,13 +575,43 @@ class MultiplicationApp {
         const completionTime = Math.round((Date.now() - this.startTime) / 1000);
         const minutes = Math.floor(completionTime / 60);
         const seconds = completionTime % 60;
+        const averageTime = Math.round(completionTime / this.questionCount * 10) / 10;
+        
+        // 保存練習記錄
+        const now = new Date();
+        const record = {
+            id: now.getTime(),
+            date: now.toISOString().split('T')[0],
+            startTime: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+            questionCount: this.questionCount,
+            totalTime: completionTime,
+            averageTimePerQuestion: averageTime
+        };
+        this.practiceRecords.saveRecord(record);
+        
+        // 獲取進步指標
+        const lastRecord = this.practiceRecords.getLastRecordWithSameQuestionCount(this.questionCount);
+        let progressText = '';
+        if (lastRecord && lastRecord.id !== record.id) {
+            const timeDiff = lastRecord.totalTime - completionTime;
+            if (timeDiff > 0) {
+                progressText = `<div class="progress-indicator">📈 比上次快了${timeDiff}秒！ ⭐</div>`;
+            } else if (timeDiff < 0) {
+                progressText = `<div class="progress-indicator">📈 比上次慢了${Math.abs(timeDiff)}秒，下次再加油！</div>`;
+            } else {
+                progressText = `<div class="progress-indicator">📈 和上次時間相同！</div>`;
+            }
+        } else {
+            progressText = `<div class="progress-indicator">🎊 第一次練習${this.questionCount}題，加油！</div>`;
+        }
         
         const appEl = document.getElementById('app');
         appEl.innerHTML = `
             <div class="completion">
                 <h1>🎉 恭喜完成！</h1>
                 <div class="completion-stats">
-                    <p>總共花費時間：<strong>${minutes} 分 ${seconds} 秒</strong></p>
+                    <p>總共花費時間：<strong>${minutes > 0 ? minutes + '分' : ''}${seconds}秒</strong></p>
+                    ${progressText}
                 </div>
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
             </div>
