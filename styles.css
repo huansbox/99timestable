@@ -376,7 +376,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* iPad橫向模式優化佈局 */
+/* iPad橫向模式 - 題目左側，虛擬鍵盤右側 */
 @media screen and (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
     .app-container {
         padding: var(--spacing-s);
@@ -384,9 +384,9 @@ body {
     
     .practice-container {
         display: grid;
-        grid-template-columns: 1fr 280px;
+        grid-template-columns: 2fr 1fr;
         grid-template-rows: auto auto 1fr auto;
-        gap: var(--spacing-m);
+        gap: var(--spacing-l);
         height: 100vh;
         max-height: 100vh;
     }
@@ -404,14 +404,20 @@ body {
     .question-container {
         grid-column: 1;
         grid-row: 3;
-        padding: var(--spacing-l);
+        padding: var(--spacing-xl);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
     .number-pad {
         grid-column: 2;
         grid-row: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         padding: var(--spacing-m);
-        align-self: center;
+        gap: var(--spacing-s);
     }
     
     .hint-container {
@@ -420,51 +426,45 @@ body {
     }
 }
 
-/* iPad直向模式優化 - 避免系統鍵盤干擾 */
+/* iPad直向模式 - 保持原有直向佈局但確保虛擬鍵盤可用 */
 @media screen and (orientation: portrait) and (min-width: 768px) and (max-width: 1023px) {
     .practice-container {
-        gap: var(--spacing-s);
-        padding-bottom: var(--spacing-s); /* 減少底部空間 */
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-m);
+        height: 100vh;
     }
     
     .question-container {
-        padding: var(--spacing-m);
-        flex: 0 1 auto; /* 允許縮小 */
+        flex: 1;
+        padding: var(--spacing-l);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
     .number-pad {
-        padding: var(--spacing-s);
-        /* 確保虛擬鍵盤總是可見 */
-        position: relative;
-        z-index: 10;
+        flex: 0 0 auto;
+        padding: var(--spacing-m);
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
     }
     
     .number-btn {
-        width: 65px;
-        height: 65px;
-        font-size: 1.2rem;
+        width: 70px;
+        height: 70px;
+        font-size: 1.4rem;
     }
     
-    /* 答案輸入區域緊湊佈局 */
     .answer-container {
-        gap: var(--spacing-s);
-        margin: var(--spacing-s) 0;
+        gap: var(--spacing-m);
+        margin: var(--spacing-m) 0;
     }
     
     .submit-btn {
-        min-width: 70px;
-        padding: var(--spacing-s) var(--spacing-m);
-        font-size: 1.2rem;
-    }
-    
-    /* 減小字體以節省空間 */
-    .question {
-        font-size: 2rem;
-    }
-    
-    .answer-input {
-        font-size: 1.6rem;
-        padding: var(--spacing-s);
+        min-width: 80px;
+        padding: var(--spacing-m) var(--spacing-l);
     }
 }
 

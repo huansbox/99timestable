@@ -98,15 +98,19 @@ class MultiplicationApp {
 
         // 檢測裝置類型
         this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-        this.isTablet = window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
         
-        // 桌面版啟用輸入框，平板和手機版設為唯讀使用虛擬鍵盤
+        // 只有桌面版才啟用輸入框，其他裝置完全使用虛擬鍵盤
         if (this.isDesktop) {
             answerInput.removeAttribute('readonly');
+            answerInput.removeAttribute('inputmode');
         } else {
+            // 確保iPad和手機完全不會彈出系統鍵盤
             answerInput.setAttribute('readonly', true);
-            // 防止iPad上意外觸發系統鍵盤
             answerInput.setAttribute('inputmode', 'none');
+            answerInput.addEventListener('focus', (e) => {
+                e.preventDefault();
+                e.target.blur();
+            });
         }
 
         // 提交答案
@@ -155,8 +159,8 @@ class MultiplicationApp {
             answerInput.focus();
         }
 
-        // 虛擬數字鍵盤（行動版）
-        if (numberPad) {
+        // 虛擬數字鍵盤（非桌面版）
+        if (numberPad && !this.isDesktop) {
             numberPad.addEventListener('click', (e) => {
                 if (e.target.classList.contains('number-btn')) {
                     const digit = e.target.textContent;
@@ -165,10 +169,15 @@ class MultiplicationApp {
                     } else if (digit === '⌫') {
                         answerInput.value = answerInput.value.slice(0, -1);
                     } else {
-                        answerInput.value += digit;
+                        // 只允許輸入數字，限制最大2位數
+                        if (answerInput.value.length < 2 && !isNaN(digit)) {
+                            answerInput.value += digit;
+                        }
                     }
-                    if (!this.isDesktop) {
-                        answerInput.focus();
+                    
+                    // 如果輸入了有效的答案，自動檢查
+                    if (answerInput.value.length > 0 && !isNaN(parseInt(answerInput.value))) {
+                        setTimeout(() => this.checkAnswer(), 300);
                     }
                 }
             });
@@ -177,13 +186,13 @@ class MultiplicationApp {
         // 監聽視窗大小變化
         window.addEventListener('resize', () => {
             this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-            this.isTablet = window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
             
             if (this.isDesktop) {
                 answerInput.removeAttribute('readonly');
                 answerInput.removeAttribute('inputmode');
                 answerInput.focus();
             } else {
+                // 非桌面裝置確保只使用虛擬鍵盤
                 answerInput.setAttribute('readonly', true);
                 answerInput.setAttribute('inputmode', 'none');
             }
