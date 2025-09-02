@@ -599,6 +599,7 @@ body {
         height: 100vh;
         max-height: 100vh;
         padding: var(--spacing-s);
+        align-items: start;
     }
     
     .header {
@@ -618,6 +619,7 @@ body {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-self: center;
     }
     
     /* iPad橫向模式答案輸入框優化 */
@@ -651,6 +653,7 @@ body {
         display: flex !important;
         flex-direction: column;
         justify-content: center;
+        align-self: center;
         padding: var(--spacing-m);
         gap: var(--spacing-s);
         background: var(--card-bg);
