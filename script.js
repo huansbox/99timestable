@@ -96,6 +96,7 @@ class MultiplicationApp {
         const answerInput = document.getElementById('answer-input');
         const submitBtn = document.getElementById('submit-btn');
         const numberPad = document.getElementById('number-pad');
+        const exitBtn = document.getElementById('exit-btn');
 
         // 檢測裝置類型 - 桌面版需要大螢幕且有精確游標（排除觸控裝置）
         this.isDesktop = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
@@ -116,6 +117,9 @@ class MultiplicationApp {
 
         // 提交答案
         submitBtn.addEventListener('click', () => this.checkAnswer());
+        
+        // 退出按鈕
+        exitBtn.addEventListener('click', () => this.handleExit());
         
         // Enter鍵提交
         answerInput.addEventListener('keypress', (e) => {
@@ -340,6 +344,47 @@ class MultiplicationApp {
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
             </div>
         `;
+    }
+
+    handleExit() {
+        // 停止計時器
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+
+        // 詢問確認
+        const confirmed = confirm('確定要退出練習嗎？目前的進度將會遺失。');
+        
+        if (confirmed) {
+            // 檢查是否為PWA模式或全螢幕模式
+            if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+                // PWA模式：顯示退出提示
+                const appEl = document.getElementById('app');
+                appEl.innerHTML = `
+                    <div class="completion">
+                        <h1>👋 練習已退出</h1>
+                        <p style="margin: var(--spacing-l) 0;">感謝使用九九乘法表練習！</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            請手動關閉此應用程式或返回主畫面
+                        </p>
+                        <button onclick="location.reload()" class="restart-btn" style="margin-top: var(--spacing-l);">
+                            重新開始
+                        </button>
+                    </div>
+                `;
+            } else {
+                // 瀏覽器模式：嘗試關閉視窗或重新載入
+                try {
+                    window.close();
+                } catch(e) {
+                    // 無法關閉視窗，回到重新開始
+                    location.reload();
+                }
+            }
+        } else {
+            // 用戶取消，重新啟動計時器
+            this.startTimer();
+        }
     }
 }
 
