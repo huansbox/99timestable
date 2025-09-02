@@ -165,7 +165,7 @@ const questions = [
     { id: 126, num1: 9, num2: 7, answer: 7, type: 'factor', result: 63 },
     { id: 127, num1: 9, num2: 8, answer: 8, type: 'factor', result: 72 },
     { id: 128, num1: 9, num2: 9, answer: 9, type: 'factor', result: 81 }
-].sort(() => Math.random() - 0.5); // 隨機打亂題目順序
+]; // 完整題庫，不在這裡打亂，而是在選題時隨機選取
 
 // 應用程式狀態
 class MultiplicationApp {
@@ -177,7 +177,7 @@ class MultiplicationApp {
         this.timerInterval = null;
         this.isProcessingAnswer = false; // 防止重複處理答案
         this.showTimer = true; // 是否顯示計時器
-        this.questionCount = 128; // 題目數量
+        this.questionCount = 10; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
         this.initStartScreen();
     }
@@ -187,16 +187,20 @@ class MultiplicationApp {
         startBtn.addEventListener('click', () => this.startPractice());
     }
 
+    // 從完整題庫中隨機選取指定數量的題目
+    getRandomQuestions(count) {
+        const shuffled = [...questions].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+    }
+
     startPractice() {
         // 獲取設定
         this.showTimer = document.getElementById('show-timer').checked;
         const questionCountRadio = document.querySelector('input[name="question-count"]:checked');
         this.questionCount = parseInt(questionCountRadio.value);
 
-        // 設定題目
-        this.currentQuestions = this.questionCount === 5 
-            ? questions.slice(0, 5) 
-            : questions;
+        // 從完整題庫中隨機選取指定數量的題目
+        this.currentQuestions = this.getRandomQuestions(this.questionCount);
 
         // 隱藏開始頁面，顯示練習頁面
         document.getElementById('start-screen').style.display = 'none';
