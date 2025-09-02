@@ -98,12 +98,15 @@ class MultiplicationApp {
 
         // 檢測裝置類型
         this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+        this.isTablet = window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
         
-        // 桌面版啟用輸入框，行動版設為唯讀
+        // 桌面版啟用輸入框，平板和手機版設為唯讀使用虛擬鍵盤
         if (this.isDesktop) {
             answerInput.removeAttribute('readonly');
         } else {
             answerInput.setAttribute('readonly', true);
+            // 防止iPad上意外觸發系統鍵盤
+            answerInput.setAttribute('inputmode', 'none');
         }
 
         // 提交答案
@@ -174,11 +177,15 @@ class MultiplicationApp {
         // 監聽視窗大小變化
         window.addEventListener('resize', () => {
             this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+            this.isTablet = window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
+            
             if (this.isDesktop) {
                 answerInput.removeAttribute('readonly');
+                answerInput.removeAttribute('inputmode');
                 answerInput.focus();
             } else {
                 answerInput.setAttribute('readonly', true);
+                answerInput.setAttribute('inputmode', 'none');
             }
         });
     }
