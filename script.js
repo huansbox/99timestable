@@ -111,7 +111,19 @@ class MultiplicationApp {
         
         // Enter鍵提交
         answerInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.checkAnswer();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.checkAnswer();
+            }
+        });
+
+        // 當輸入達到合理長度時自動檢查（行動裝置優化）
+        answerInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            // 如果輸入2位數且是有效數字，自動檢查
+            if (value.length === 2 && !isNaN(parseInt(value))) {
+                setTimeout(() => this.checkAnswer(), 300);
+            }
         });
 
         // 桌面版額外鍵盤支援
@@ -212,14 +224,20 @@ class MultiplicationApp {
         const userAnswer = parseInt(answerInput.value);
         const correctAnswer = questions[this.currentQuestion].answer;
 
+        // 如果輸入為空或非數字，不進行處理
+        if (isNaN(userAnswer) || answerInput.value.trim() === '') {
+            return;
+        }
+
         this.attempts++;
         this.totalAttempts++;
 
         if (userAnswer === correctAnswer) {
             this.showCorrectFeedback();
+            // 所有裝置都在1.2秒後自動進入下一題
             setTimeout(() => {
                 this.nextQuestion();
-            }, 1500); // 1.5秒後自動進入下一題
+            }, 1200);
         } else {
             this.showIncorrectFeedback();
             answerInput.value = ''; // 清空錯誤答案

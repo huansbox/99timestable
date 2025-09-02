@@ -377,40 +377,76 @@ body {
 }
 
 /* 響應式設計 - iPad橫向模式 */
-@media screen and (orientation: landscape) and (min-width: 768px) {
+@media screen and (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
+    .app-container {
+        padding: var(--spacing-s);
+    }
+    
     .practice-container {
-        flex-direction: row;
-        gap: var(--spacing-l);
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-rows: auto auto 1fr auto;
+        gap: var(--spacing-s);
         height: 100vh;
-        padding: var(--spacing-m);
+        max-height: 100vh;
     }
     
     .header {
-        order: 1;
-        flex: 0 0 200px;
+        grid-column: 1 / -1;
+        grid-row: 1;
     }
     
     .progress-container {
-        order: 2;
-        flex: 0 0 180px;
+        grid-column: 1 / -1;
+        grid-row: 2;
     }
     
     .question-container {
-        order: 3;
-        flex: 1;
-        max-width: none;
+        grid-column: 2;
+        grid-row: 3;
     }
     
     .number-pad {
-        order: 4;
-        flex: 0 0 280px;
-        justify-content: center;
+        grid-column: 3;
+        grid-row: 3;
+        padding: var(--spacing-s);
     }
     
     .hint-container {
-        order: 5;
-        flex: 0 0 auto;
-        display: none; /* 橫向模式隱藏提示 */
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+}
+
+/* iPad直向模式優化 - 確保確認按鈕可見 */
+@media screen and (orientation: portrait) and (min-width: 768px) and (max-width: 1023px) {
+    .practice-container {
+        gap: var(--spacing-s);
+    }
+    
+    .question-container {
+        padding: var(--spacing-l);
+    }
+    
+    .number-pad {
+        padding: var(--spacing-s);
+    }
+    
+    .number-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 1.3rem;
+    }
+    
+    /* 確保答案輸入區域有足夠空間 */
+    .answer-container {
+        gap: var(--spacing-s);
+        margin: var(--spacing-m) 0;
+    }
+    
+    .submit-btn {
+        min-width: 80px;
+        padding: var(--spacing-s) var(--spacing-m);
     }
 }
 
@@ -609,7 +645,7 @@ body {
 /* 桌面版鍵盤操作提示 */
 @media screen and (min-width: 1024px) {
     .hint::after {
-        content: "使用鍵盤輸入答案，按 Enter 確認";
+        content: "使用鍵盤輸入答案，輸入完成後自動檢查";
         display: block;
         margin-top: var(--spacing-xs);
         font-size: 0.85rem;
