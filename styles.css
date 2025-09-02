@@ -428,12 +428,12 @@ body {
     
     .practice-container {
         display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        grid-template-rows: auto auto 1fr auto;
-        gap: var(--spacing-m);
+        grid-template-columns: 1.4fr 0.6fr;
+        grid-template-rows: auto auto 1fr;
+        gap: var(--spacing-s);
         height: 100vh;
         max-height: 100vh;
-        padding: var(--spacing-s) var(--spacing-m);
+        padding: var(--spacing-s);
     }
     
     .header {
@@ -468,6 +468,18 @@ body {
         text-align: center;
     }
     
+    /* 將提示放在題目區域內 */
+    .hint-container {
+        margin-top: var(--spacing-m);
+        padding: var(--spacing-xs);
+    }
+    
+    .hint {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+    
     .number-pad {
         grid-column: 2;
         grid-row: 3;
@@ -489,11 +501,6 @@ body {
         height: var(--touch-target-large);
         font-size: var(--font-size-button);
         margin: 2px;
-    }
-    
-    .hint-container {
-        grid-column: 1 / -1;
-        grid-row: 4;
     }
 }
 
@@ -539,6 +546,19 @@ body {
     .submit-btn {
         min-width: 80px;
         padding: var(--spacing-m) var(--spacing-l);
+    }
+    
+    /* iPad直向模式的提示 */
+    .hint-container {
+        margin-top: var(--spacing-s);
+        padding: var(--spacing-xs);
+        text-align: center;
+    }
+    
+    .hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin: 0;
     }
 }
 
