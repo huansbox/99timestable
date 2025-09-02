@@ -96,6 +96,16 @@ class MultiplicationApp {
         const submitBtn = document.getElementById('submit-btn');
         const numberPad = document.getElementById('number-pad');
 
+        // 檢測裝置類型
+        this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+        
+        // 桌面版啟用輸入框，行動版設為唯讀
+        if (this.isDesktop) {
+            answerInput.removeAttribute('readonly');
+        } else {
+            answerInput.setAttribute('readonly', true);
+        }
+
         // 提交答案
         submitBtn.addEventListener('click', () => this.checkAnswer());
         
@@ -104,18 +114,59 @@ class MultiplicationApp {
             if (e.key === 'Enter') this.checkAnswer();
         });
 
-        // 虛擬數字鍵盤
-        numberPad.addEventListener('click', (e) => {
-            if (e.target.classList.contains('number-btn')) {
-                const digit = e.target.textContent;
-                if (digit === 'C') {
-                    answerInput.value = '';
-                } else if (digit === '⌫') {
-                    answerInput.value = answerInput.value.slice(0, -1);
-                } else {
-                    answerInput.value += digit;
+        // 桌面版額外鍵盤支援
+        if (this.isDesktop) {
+            document.addEventListener('keydown', (e) => {
+                // 數字鍵輸入
+                if (e.key >= '0' && e.key <= '9' && !answerInput.contains(document.activeElement)) {
+                    answerInput.focus();
+                    answerInput.value = e.key;
                 }
+                
+                // 空格鍵也可以確認答案
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    this.checkAnswer();
+                }
+                
+                // ESC鍵清空輸入
+                if (e.key === 'Escape') {
+                    answerInput.value = '';
+                    answerInput.focus();
+                }
+            });
+
+            // 桌面版自動聚焦
+            answerInput.focus();
+        }
+
+        // 虛擬數字鍵盤（行動版）
+        if (numberPad) {
+            numberPad.addEventListener('click', (e) => {
+                if (e.target.classList.contains('number-btn')) {
+                    const digit = e.target.textContent;
+                    if (digit === 'C') {
+                        answerInput.value = '';
+                    } else if (digit === '⌫') {
+                        answerInput.value = answerInput.value.slice(0, -1);
+                    } else {
+                        answerInput.value += digit;
+                    }
+                    if (!this.isDesktop) {
+                        answerInput.focus();
+                    }
+                }
+            });
+        }
+
+        // 監聽視窗大小變化
+        window.addEventListener('resize', () => {
+            this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+            if (this.isDesktop) {
+                answerInput.removeAttribute('readonly');
                 answerInput.focus();
+            } else {
+                answerInput.setAttribute('readonly', true);
             }
         });
     }
@@ -144,7 +195,12 @@ class MultiplicationApp {
 
         // 清空輸入框
         answerInput.value = '';
-        answerInput.focus();
+        
+        // 桌面版自動聚焦
+        if (this.isDesktop) {
+            answerInput.focus();
+        }
+        
         this.attempts = 0;
 
         // 重置樣式

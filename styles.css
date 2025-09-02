@@ -466,3 +466,153 @@ body {
         min-width: var(--touch-target-large);
     }
 }
+
+/* 桌面電腦優化 */
+@media screen and (min-width: 1024px) {
+    :root {
+        /* 桌面字體調整 */
+        --font-size-title: 1.8rem;
+        --font-size-question: 2rem;
+        --font-size-input: 1.5rem;
+        --font-size-button: 1.2rem;
+        --font-size-progress: 1rem;
+        
+        /* 桌面按鈕尺寸 */
+        --touch-target: 45px;
+        --touch-target-large: 50px;
+    }
+    
+    /* 主容器桌面佈局 */
+    .app-container {
+        max-width: 1000px;
+        padding: var(--spacing-l);
+    }
+    
+    /* 練習容器桌面排版 */
+    .practice-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-rows: auto auto 1fr auto;
+        gap: var(--spacing-l);
+        height: 100vh;
+        max-height: 800px;
+        margin: 0 auto;
+    }
+    
+    /* 桌面網格佈局 */
+    .header {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+    
+    .progress-container {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+    
+    .question-container {
+        grid-column: 2;
+        grid-row: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    /* 桌面版隱藏虛擬鍵盤 */
+    .number-pad {
+        display: none;
+    }
+    
+    .hint-container {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+    
+    /* 桌面版提示文字 */
+    .hint {
+        font-size: 0.9rem;
+    }
+    
+    .hint::before {
+        content: "💻 ";
+    }
+    
+    .hint {
+        color: var(--text-secondary);
+    }
+    
+    /* 啟用輸入框 */
+    .answer-input {
+        readonly: false;
+        cursor: text;
+    }
+    
+    /* 桌面按鈕尺寸調整 */
+    .submit-btn {
+        padding: var(--spacing-s) var(--spacing-m);
+        min-width: 100px;
+        height: auto;
+    }
+    
+    /* 桌面懸停效果增強 */
+    .submit-btn:hover {
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+    }
+    
+    .answer-input:hover {
+        border-color: var(--primary-color);
+    }
+    
+    /* 完成頁面桌面優化 */
+    .completion {
+        max-width: 600px;
+        margin: var(--spacing-xl) auto;
+    }
+    
+    .completion h1 {
+        font-size: 2.2rem;
+    }
+    
+    /* 進度條桌面樣式 */
+    .progress-bar {
+        height: 6px;
+    }
+}
+
+/* 大螢幕桌面進一步優化 */
+@media screen and (min-width: 1440px) {
+    :root {
+        --font-size-question: 2.2rem;
+        --font-size-input: 1.6rem;
+    }
+    
+    .app-container {
+        max-width: 1200px;
+    }
+    
+    .practice-container {
+        max-height: 900px;
+    }
+}
+
+/* 超寬螢幕優化 */
+@media screen and (min-width: 1920px) {
+    .app-container {
+        max-width: 1400px;
+    }
+    
+    .question-container {
+        padding: var(--spacing-xl) var(--spacing-xl) * 1.5;
+    }
+}
+
+/* 桌面版鍵盤操作提示 */
+@media screen and (min-width: 1024px) {
+    .hint::after {
+        content: "使用鍵盤輸入答案，按 Enter 確認";
+        display: block;
+        margin-top: var(--spacing-xs);
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+}
