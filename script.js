@@ -67,6 +67,7 @@ class MultiplicationApp {
         this.attempts = 0;
         this.totalAttempts = 0;
         this.timerInterval = null;
+        this.isProcessingAnswer = false; // 防止重複處理答案
         this.init();
     }
 
@@ -124,12 +125,18 @@ class MultiplicationApp {
             }
         });
 
-        // 當輸入達到合理長度時自動檢查（行動裝置優化）
+        // 桌面版和所有裝置的input自動檢查（有防護機制）
         answerInput.addEventListener('input', (e) => {
-            const value = e.target.value;
-            // 如果輸入2位數且是有效數字，自動檢查
-            if (value.length === 2 && !isNaN(parseInt(value))) {
-                setTimeout(() => this.checkAnswer(), 300);
+            const currentValue = e.target.value;
+            // 當輸入2位數或1位數時，延遲自動檢查
+            if (currentValue.length >= 1 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
+                const delay = currentValue.length === 1 ? 800 : 300; // 1位數等久一點，2位數快速檢查
+                setTimeout(() => {
+                    // 再次檢查是否還在處理中，以及輸入值是否改變
+                    if (!this.isProcessingAnswer && answerInput.value === currentValue) {
+                        this.checkAnswer();
+                    }
+                }, delay);
             }
         });
 
@@ -159,8 +166,8 @@ class MultiplicationApp {
             answerInput.focus();
         }
 
-        // 虛擬數字鍵盤（非桌面版）
-        if (numberPad && !this.isDesktop) {
+        // 虛擬數字鍵盤（所有非桌面裝置）
+        if (numberPad) {
             numberPad.addEventListener('click', (e) => {
                 if (e.target.classList.contains('number-btn')) {
                     const digit = e.target.textContent;
@@ -175,9 +182,15 @@ class MultiplicationApp {
                         }
                     }
                     
-                    // 如果輸入了有效的答案，自動檢查
-                    if (answerInput.value.length > 0 && !isNaN(parseInt(answerInput.value))) {
-                        setTimeout(() => this.checkAnswer(), 300);
+                    // 恢復自動檢查功能，但有防護機制
+                    const currentValue = answerInput.value;
+                    if (currentValue.length > 0 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
+                        setTimeout(() => {
+                            // 再次檢查是否還在處理中，以及輸入值是否改變
+                            if (!this.isProcessingAnswer && answerInput.value === currentValue) {
+                                this.checkAnswer();
+                            }
+                        }, 300);
                     }
                 }
             });
@@ -230,12 +243,20 @@ class MultiplicationApp {
         }
         
         this.attempts = 0;
+        
+        // 重置處理狀態
+        this.isProcessingAnswer = false;
 
         // 重置樣式
         this.resetFeedback();
     }
 
     checkAnswer() {
+        // 防止重複處理答案
+        if (this.isProcessingAnswer) {
+            return;
+        }
+
         const answerInput = document.getElementById('answer-input');
         const userAnswer = parseInt(answerInput.value);
         const correctAnswer = questions[this.currentQuestion].answer;
@@ -245,6 +266,7 @@ class MultiplicationApp {
             return;
         }
 
+        this.isProcessingAnswer = true; // 設置處理標誌
         this.attempts++;
         this.totalAttempts++;
 
@@ -253,10 +275,12 @@ class MultiplicationApp {
             // 所有裝置都在1.2秒後自動進入下一題
             setTimeout(() => {
                 this.nextQuestion();
+                this.isProcessingAnswer = false; // 完成後重置標誌
             }, 1200);
         } else {
             this.showIncorrectFeedback();
             answerInput.value = ''; // 清空錯誤答案
+            this.isProcessingAnswer = false; // 錯誤答案立即重置標誌
         }
     }
 

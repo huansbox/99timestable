@@ -413,7 +413,7 @@ body {
     .number-pad {
         grid-column: 2;
         grid-row: 3;
-        display: flex;
+        display: flex !important;
         flex-direction: column;
         justify-content: center;
         padding: var(--spacing-m);
@@ -444,11 +444,14 @@ body {
     }
     
     .number-pad {
+        display: flex !important;
         flex: 0 0 auto;
+        flex-direction: column;
         padding: var(--spacing-m);
         background: var(--card-bg);
         border-radius: 16px;
         box-shadow: var(--shadow);
+        gap: var(--spacing-s);
     }
     
     .number-btn {
@@ -574,7 +577,7 @@ body {
     
     /* 桌面版隱藏虛擬鍵盤 */
     .number-pad {
-        display: none;
+        display: none !important;
     }
     
     .hint-container {
