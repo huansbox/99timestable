@@ -585,8 +585,8 @@ body {
     transform: translateY(-1px);
 }
 
-/* iPad橫向模式 - 題目左側，虛擬鍵盤右側 */
-@media screen and (orientation: landscape) and (min-width: 768px) and (pointer: coarse) {
+/* iPad橫向模式 - 題目左側，虛擬鍵盤右側 - 提高優先級 */
+@media screen and (orientation: landscape) and (min-width: 768px) and (pointer: coarse) and (max-width: 1366px) {
     .app-container {
         padding: var(--spacing-s);
     }
@@ -595,10 +595,12 @@ body {
         display: grid !important;
         grid-template-columns: 2fr 1fr !important;
         grid-template-rows: auto auto 1fr !important;
-        gap: var(--spacing-l);
-        height: 100vh;
-        max-height: 100vh;
-        padding: var(--spacing-m);
+        gap: var(--spacing-l) !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: var(--spacing-m) !important;
+        /* 確保覆蓋其他所有佈局規則 */
+        flex-direction: unset !important;
     }
     
     .header {
@@ -673,6 +675,99 @@ body {
     }
 }
 
+/* 大尺寸iPad橫式專用規則 - 確保Grid佈局生效 */
+@media screen and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) and (pointer: coarse) {
+    .practice-container {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        grid-template-rows: auto auto 1fr !important;
+        gap: var(--spacing-l) !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: var(--spacing-m) !important;
+        flex-direction: unset !important;
+    }
+    
+    .header {
+        grid-column: 1 / -1 !important;
+        grid-row: 1 !important;
+    }
+    
+    .progress-container {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+    }
+    
+    .question-container {
+        grid-column: 1 !important;
+        grid-row: 3 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    
+    .number-pad {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-self: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 10 !important;
+    }
+}
+
+/* iPad Pro等大尺寸平板橫式模式專用 - 解決與桌面版衝突 */
+@media screen and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) and (pointer: coarse) {
+    .practice-container {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        grid-template-rows: auto auto 1fr !important;
+        flex-direction: unset !important;
+        gap: var(--spacing-l);
+        height: 100vh;
+        max-height: 100vh;
+        padding: var(--spacing-m);
+    }
+    
+    .header {
+        grid-column: 1 / -1 !important;
+        grid-row: 1 !important;
+    }
+    
+    .progress-container {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+    }
+    
+    .question-container {
+        grid-column: 1 !important;
+        grid-row: 3 !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: var(--spacing-xl);
+    }
+    
+    .number-pad {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-self: center;
+        padding: var(--spacing-m);
+        gap: var(--spacing-s);
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
 /* iPad直向模式 - 保持原有直向佈局但確保虛擬鍵盤可用 */
 @media screen and (orientation: portrait) and (min-width: 768px) and (pointer: coarse) {
     .practice-container {
@@ -731,8 +826,8 @@ body {
     }
 }
 
-/* 針對更大的iPad Pro */
-@media screen and (min-width: 1024px) {
+/* 針對更大的iPad Pro - 只在觸控裝置套用 */
+@media screen and (min-width: 1024px) and (pointer: coarse) {
     :root {
         --font-size-question: 3rem;
         --font-size-input: 2.5rem;
@@ -784,8 +879,8 @@ body {
     }
 }
 
-/* 桌面電腦優化 - 排除觸控裝置 */
-@media screen and (min-width: 1024px) and (pointer: fine) {
+/* 桌面電腦優化 - 嚴格排除觸控裝置，避免影響iPad */
+@media screen and (min-width: 1024px) and (pointer: fine) and (hover: hover) {
     :root {
         /* 桌面字體調整 */
         --font-size-title: 1.8rem;
