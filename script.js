@@ -97,8 +97,8 @@ class MultiplicationApp {
         const submitBtn = document.getElementById('submit-btn');
         const numberPad = document.getElementById('number-pad');
 
-        // 檢測裝置類型
-        this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+        // 檢測裝置類型 - 桌面版需要大螢幕且有精確游標（排除觸控裝置）
+        this.isDesktop = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
         
         // 只有桌面版才啟用輸入框，其他裝置完全使用虛擬鍵盤
         if (this.isDesktop) {
@@ -130,7 +130,7 @@ class MultiplicationApp {
             const currentValue = e.target.value;
             // 當輸入2位數或1位數時，延遲自動檢查
             if (currentValue.length >= 1 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
-                const delay = currentValue.length === 1 ? 800 : 300; // 1位數等久一點，2位數快速檢查
+                const delay = currentValue.length === 1 ? 600 : 300; // 1位數600ms，2位數300ms
                 setTimeout(() => {
                     // 再次檢查是否還在處理中，以及輸入值是否改變
                     if (!this.isProcessingAnswer && answerInput.value === currentValue) {
@@ -185,12 +185,13 @@ class MultiplicationApp {
                     // 恢復自動檢查功能，但有防護機制
                     const currentValue = answerInput.value;
                     if (currentValue.length > 0 && !isNaN(parseInt(currentValue)) && !this.isProcessingAnswer) {
+                        const delay = currentValue.length === 1 ? 600 : 300; // 與鍵盤輸入相同時間
                         setTimeout(() => {
                             // 再次檢查是否還在處理中，以及輸入值是否改變
                             if (!this.isProcessingAnswer && answerInput.value === currentValue) {
                                 this.checkAnswer();
                             }
-                        }, 300);
+                        }, delay);
                     }
                 }
             });
@@ -198,7 +199,7 @@ class MultiplicationApp {
 
         // 監聽視窗大小變化
         window.addEventListener('resize', () => {
-            this.isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+            this.isDesktop = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
             
             if (this.isDesktop) {
                 answerInput.removeAttribute('readonly');

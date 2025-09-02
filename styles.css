@@ -524,8 +524,8 @@ body {
     }
 }
 
-/* 桌面電腦優化 */
-@media screen and (min-width: 1024px) {
+/* 桌面電腦優化 - 排除觸控裝置 */
+@media screen and (min-width: 1024px) and (pointer: fine) {
     :root {
         /* 桌面字體調整 */
         --font-size-title: 1.8rem;
@@ -664,7 +664,7 @@ body {
 }
 
 /* 桌面版鍵盤操作提示 */
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1024px) and (pointer: fine) {
     .hint::after {
         content: "使用鍵盤輸入答案，輸入完成後自動檢查";
         display: block;
