@@ -415,3 +415,39 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 4. ✅ 測試提交流程正常運作
 
 **下次開啟對話時**：直接在 `D:\mywork\99times` 工作，享受自動化版本控制！
+
+## 🔧 開發工作流程 SOP
+
+### 標準操作程序
+每次修改程式碼後，遵循以下步驟：
+
+1. **修改完成後**：
+   - 列出修改的檔案清單
+   - 簡述修改內容重點
+   - 提供建議的 commit message（包含詳細說明）
+
+2. **Commit Message 格式**：
+   ```
+   簡潔的標題：描述修改重點
+
+   - 修改項目1的詳細說明
+   - 修改項目2的詳細說明
+   - 修改項目3的詳細說明
+
+   🤖 Generated with [Claude Code](https://claude.ai/code)
+
+   Co-Authored-By: Claude <noreply@anthropic.com>
+   ```
+
+3. **用戶確認**：
+   - 用戶輸入 "commit" 確認提交
+   - 自動執行 git add, commit, push 流程
+
+4. **完成提示**：
+   - 顯示 commit ID 和推送狀態
+   - 提醒 GitHub Pages 部署時間（1-2分鐘）
+
+### 快取問題提醒
+- 電腦版瀏覽器可能有快取，建議使用 `Ctrl + F5` 強制重新載入
+- 手機版通常會正常顯示新版本
+- 如有問題可開啟無痕模式測試
