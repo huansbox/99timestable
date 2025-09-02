@@ -60,6 +60,159 @@ body {
     padding: var(--spacing-s);
 }
 
+/* 開始設定頁面 */
+.start-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-l);
+}
+
+.start-content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: var(--spacing-xl);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.start-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-s);
+    font-weight: 600;
+}
+
+.start-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-xl);
+}
+
+.settings-section {
+    text-align: left;
+    margin-bottom: var(--spacing-xl);
+}
+
+.setting-item {
+    margin-bottom: var(--spacing-l);
+    padding: var(--spacing-m);
+    background: rgba(66, 133, 244, 0.05);
+    border-radius: 12px;
+}
+
+.setting-label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.setting-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    font-style: italic;
+}
+
+/* 自訂 Checkbox */
+.setting-checkbox {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    margin-right: var(--spacing-s);
+    position: relative;
+    display: inline-block;
+}
+
+.setting-checkbox:checked + .checkmark {
+    background: var(--primary-color);
+}
+
+.setting-checkbox:checked + .checkmark::after {
+    content: '✓';
+    color: white;
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Radio Group */
+.radio-group {
+    margin-top: var(--spacing-s);
+}
+
+.radio-label {
+    font-size: 1rem;
+    font-weight: normal;
+    margin-bottom: var(--spacing-s);
+    cursor: pointer;
+}
+
+.setting-radio {
+    display: none;
+}
+
+.radio-mark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    margin-right: var(--spacing-s);
+    position: relative;
+    display: inline-block;
+}
+
+.setting-radio:checked + .radio-mark {
+    background: var(--primary-color);
+}
+
+.setting-radio:checked + .radio-mark::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+.start-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: var(--spacing-m) var(--spacing-xl);
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+.start-btn:hover {
+    background: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.start-btn:active {
+    transform: translateY(0);
+}
+
 /* 練習容器 */
 .practice-container {
     display: flex;
@@ -242,6 +395,18 @@ body {
     align-items: center;
     width: 100%;
     max-width: 400px;
+}
+
+.answer-hint {
+    margin-top: var(--spacing-s);
+    text-align: center;
+}
+
+.answer-hint .hint {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-style: italic;
 }
 
 .answer-input {

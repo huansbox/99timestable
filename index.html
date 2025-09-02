@@ -34,8 +34,45 @@
 </head>
 <body>
     <div id="app" class="app-container">
+        <!-- 開始設定頁面 -->
+        <div id="start-screen" class="start-screen">
+            <div class="start-content">
+                <h1 class="start-title">九九乘法表練習</h1>
+                <p class="start-subtitle">為8歲小朋友設計的互動式練習</p>
+                
+                <div class="settings-section">
+                    <div class="setting-item">
+                        <label class="setting-label">
+                            <input type="checkbox" id="show-timer" class="setting-checkbox" checked>
+                            <span class="checkmark"></span>
+                            顯示計時器
+                        </label>
+                        <p class="setting-desc">關閉可避免小朋友因時間而緊張</p>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="setting-label">題目數量：</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="question-count" value="5" class="setting-radio">
+                                <span class="radio-mark"></span>
+                                5題（快速測試）
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="question-count" value="50" class="setting-radio" checked>
+                                <span class="radio-mark"></span>
+                                50題（完整練習）
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="start-practice" class="start-btn">開始練習</button>
+            </div>
+        </div>
+        
         <!-- 練習頁面 -->
-        <div class="practice-container">
+        <div id="practice-screen" class="practice-container" style="display: none;">
             <!-- 標頭區域 -->
             <header class="header">
                 <div class="header-content">
@@ -79,6 +116,11 @@
                     >
                     <button id="submit-btn" class="submit-btn">確認</button>
                 </div>
+                
+                <!-- 操作提示 -->
+                <div class="answer-hint">
+                    <p class="hint">💡 輸入正確答案後將自動進入下一題</p>
+                </div>
             </main>
 
             <!-- 虛擬數字鍵盤 -->
@@ -105,10 +147,6 @@
                 </div>
             </div>
 
-            <!-- 操作提示 -->
-            <div class="hint-container">
-                <p class="hint">💡 輸入正確答案後將自動進入下一題</p>
-            </div>
         </div>
     </div>
 

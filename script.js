@@ -68,12 +68,46 @@ class MultiplicationApp {
         this.totalAttempts = 0;
         this.timerInterval = null;
         this.isProcessingAnswer = false; // 防止重複處理答案
+        this.showTimer = true; // 是否顯示計時器
+        this.questionCount = 50; // 題目數量
+        this.currentQuestions = []; // 當前使用的題目
+        this.initStartScreen();
+    }
+
+    initStartScreen() {
+        const startBtn = document.getElementById('start-practice');
+        startBtn.addEventListener('click', () => this.startPractice());
+    }
+
+    startPractice() {
+        // 獲取設定
+        this.showTimer = document.getElementById('show-timer').checked;
+        const questionCountRadio = document.querySelector('input[name="question-count"]:checked');
+        this.questionCount = parseInt(questionCountRadio.value);
+
+        // 設定題目
+        this.currentQuestions = this.questionCount === 5 
+            ? questions.slice(0, 5) 
+            : questions;
+
+        // 隱藏開始頁面，顯示練習頁面
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('practice-screen').style.display = 'flex';
+
+        // 根據設定顯示或隱藏計時器
+        const timerContainer = document.querySelector('.timer-container');
+        if (timerContainer) {
+            timerContainer.style.display = this.showTimer ? 'flex' : 'none';
+        }
+
         this.init();
     }
 
     init() {
         this.startTime = Date.now();
-        this.startTimer();
+        if (this.showTimer) {
+            this.startTimer();
+        }
         this.showQuestion();
         this.setupEventListeners();
     }
@@ -218,17 +252,17 @@ class MultiplicationApp {
     }
 
     showQuestion() {
-        const question = questions[this.currentQuestion];
+        const question = this.currentQuestions[this.currentQuestion];
         const questionEl = document.getElementById('question');
         const progressEl = document.getElementById('progress');
         const progressFillEl = document.getElementById('progress-fill');
         const answerInput = document.getElementById('answer-input');
 
         // 更新進度
-        progressEl.textContent = `第 ${this.currentQuestion + 1} 題 / 共 50 題`;
+        progressEl.textContent = `第 ${this.currentQuestion + 1} 題 / 共 ${this.currentQuestions.length} 題`;
         
         // 更新進度條
-        const progressPercent = ((this.currentQuestion + 1) / questions.length) * 100;
+        const progressPercent = ((this.currentQuestion + 1) / this.currentQuestions.length) * 100;
         progressFillEl.style.width = `${progressPercent}%`;
 
         // 顯示題目
@@ -264,7 +298,7 @@ class MultiplicationApp {
 
         const answerInput = document.getElementById('answer-input');
         const userAnswer = parseInt(answerInput.value);
-        const correctAnswer = questions[this.currentQuestion].answer;
+        const correctAnswer = this.currentQuestions[this.currentQuestion].answer;
 
         // 如果輸入為空或非數字，不進行處理
         if (isNaN(userAnswer) || answerInput.value.trim() === '') {
@@ -315,7 +349,7 @@ class MultiplicationApp {
     nextQuestion() {
         this.currentQuestion++;
         
-        if (this.currentQuestion >= questions.length) {
+        if (this.currentQuestion >= this.currentQuestions.length) {
             this.showCompletion();
         } else {
             this.showQuestion();
@@ -338,8 +372,6 @@ class MultiplicationApp {
                 <h1>🎉 恭喜完成！</h1>
                 <div class="completion-stats">
                     <p>總共花費時間：<strong>${minutes} 分 ${seconds} 秒</strong></p>
-                    <p>總嘗試次數：<strong>${this.totalAttempts}</strong></p>
-                    <p>平均每題：<strong>${(this.totalAttempts / questions.length).toFixed(1)}</strong> 次</p>
                 </div>
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
             </div>
