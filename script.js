@@ -805,21 +805,6 @@ class MultiplicationApp {
         };
         this.practiceRecords.saveRecord(record);
         
-        // 獲取進步指標 (與上次比較)
-        const lastRecord = this.practiceRecords.getLastRecordWithSameQuestionCount(this.questionCount);
-        let progressText = '';
-        if (lastRecord && lastRecord.id !== record.id) {
-            const timeDiff = lastRecord.totalTime - completionTime;
-            if (timeDiff > 0) {
-                progressText = `<div class="progress-indicator">📈 比上次快了${timeDiff}秒！ ⭐</div>`;
-            } else if (timeDiff < 0) {
-                progressText = `<div class="progress-indicator">📈 比上次慢了${Math.abs(timeDiff)}秒，下次再加油！</div>`;
-            } else {
-                progressText = `<div class="progress-indicator">📈 和上次時間相同！</div>`;
-            }
-        } else {
-            progressText = `<div class="progress-indicator">🎊 第一次練習${this.questionCount}題，加油！</div>`;
-        }
         
         // 獲取最快記錄比較和排名檢查
         const fastestRecord = this.practiceRecords.getFastestRecord(this.questionCount);
@@ -858,7 +843,6 @@ class MultiplicationApp {
                 <h1>🎉 恭喜完成！</h1>
                 <div class="completion-stats">
                     <p>總共花費時間：<strong>${minutes > 0 ? minutes + '分' : ''}${seconds}秒</strong></p>
-                    ${progressText}
                     ${fastestCompareText}
                 </div>
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
