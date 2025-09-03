@@ -755,7 +755,7 @@ body {
     
     .practice-container {
         display: grid !important;
-        grid-template-columns: 2fr 1fr !important;
+        grid-template-columns: 1.5fr 1fr !important;
         grid-template-rows: auto auto 1fr !important;
         gap: var(--spacing-l) !important;
         height: 100vh !important;
@@ -841,7 +841,7 @@ body {
 @media screen and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) and (pointer: coarse) {
     .practice-container {
         display: grid !important;
-        grid-template-columns: 2fr 1fr !important;
+        grid-template-columns: 1.5fr 1fr !important;
         grid-template-rows: auto auto 1fr !important;
         gap: var(--spacing-l) !important;
         height: 100vh !important;
@@ -885,7 +885,7 @@ body {
 @media screen and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) and (pointer: coarse) {
     .practice-container {
         display: grid !important;
-        grid-template-columns: 2fr 1fr !important;
+        grid-template-columns: 1.5fr 1fr !important;
         grid-template-rows: auto auto 1fr !important;
         flex-direction: unset !important;
         gap: var(--spacing-l);
