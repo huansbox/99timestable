@@ -185,42 +185,54 @@ class PracticeRecords {
         const records = this.getRecords();
         records.unshift(record); // 新記錄加在前面
 
-        // 限制最多20筆記錄，但保護最快記錄
+        // 限制最多20筆記錄，但保護前10名記錄
         if (records.length > this.maxRecords) {
-            this.protectFastestRecords(records);
+            this.protectTopRecords(records);
         }
 
         localStorage.setItem(this.storageKey, JSON.stringify(records));
     }
 
-    // 保護最快記錄不被刪除
-    protectFastestRecords(records) {
-        // 按題數分組，找出每組的最快記錄
-        const fastestByQuestionCount = {};
+    // 保護前10名記錄不被刪除
+    protectTopRecords(records) {
+        // 按題數分組，每組保護前10名
+        const topRecordsByQuestionCount = {};
         
         records.forEach(record => {
             const count = record.questionCount;
-            if (!fastestByQuestionCount[count] || record.totalTime < fastestByQuestionCount[count].totalTime) {
-                fastestByQuestionCount[count] = record;
+            if (!topRecordsByQuestionCount[count]) {
+                topRecordsByQuestionCount[count] = [];
             }
+            topRecordsByQuestionCount[count].push(record);
         });
         
-        const fastestRecords = Object.values(fastestByQuestionCount);
+        // 每組按時間排序，保護前10名
+        const protectedRecords = [];
+        const otherRecords = [];
         
-        // 將記錄分為最快記錄和其他記錄
-        const otherRecords = records.filter(record => 
-            !fastestRecords.some(fastest => fastest.id === record.id)
-        );
+        Object.values(topRecordsByQuestionCount).forEach(groupRecords => {
+            // 按時間排序
+            groupRecords.sort((a, b) => a.totalTime - b.totalTime);
+            
+            // 前10名為保護記錄
+            const top10 = groupRecords.slice(0, 10);
+            const others = groupRecords.slice(10);
+            
+            protectedRecords.push(...top10);
+            otherRecords.push(...others);
+        });
         
         // 從其他記錄中刪除多餘的記錄
-        const availableSlots = this.maxRecords - fastestRecords.length;
+        const availableSlots = this.maxRecords - protectedRecords.length;
         if (otherRecords.length > availableSlots) {
+            // 按日期排序，保留最新的記錄
+            otherRecords.sort((a, b) => new Date(b.date + ' ' + b.startTime) - new Date(a.date + ' ' + a.startTime));
             otherRecords.splice(availableSlots);
         }
         
-        // 重新組合：最快記錄 + 其他記錄
+        // 重新組合：保護記錄 + 其他記錄
         records.length = 0;
-        records.push(...fastestRecords, ...otherRecords);
+        records.push(...protectedRecords, ...otherRecords);
     }
 
     // 獲取特定題數的最快記錄
@@ -306,13 +318,49 @@ class MultiplicationApp {
             e.preventDefault();
             this.backToStart();
         });
+
+        // 切換選項卡事件處理
+        this.setupLeaderboardTabs();
+    }
+
+    // 設定排行榜選項卡
+    setupLeaderboardTabs() {
+        const tabs = document.querySelectorAll('.leaderboard-tab');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const questionCount = parseInt(tab.dataset.questions);
+                this.switchLeaderboard(questionCount);
+            });
+            
+            // iPad觸控支援
+            tab.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const questionCount = parseInt(tab.dataset.questions);
+                this.switchLeaderboard(questionCount);
+            });
+        });
+    }
+
+    // 切換排行榜顯示
+    switchLeaderboard(questionCount) {
+        // 更新選項卡狀態
+        document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-questions="${questionCount}"]`).classList.add('active');
+        
+        // 載入對應題數的記錄
+        this.loadLeaderboard(questionCount);
     }
 
     // 顯示歷史記錄頁面
     showRecords() {
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('records-screen').style.display = 'flex';
-        this.loadRecords();
+        // 預設顯示10題排行榜
+        this.loadLeaderboard(10);
     }
 
     // 返回開始頁面
@@ -321,7 +369,63 @@ class MultiplicationApp {
         document.getElementById('start-screen').style.display = 'flex';
     }
 
-    // 載入記錄列表
+    // 載入排行榜（按題數分組顯示前10名）
+    loadLeaderboard(questionCount) {
+        const records = this.practiceRecords.getRecords();
+        const recordsList = document.getElementById('records-list');
+        
+        // 過濾出指定題數的記錄
+        const filteredRecords = records.filter(record => record.questionCount === questionCount);
+        
+        if (filteredRecords.length === 0) {
+            recordsList.innerHTML = `<div class="no-records">還沒有${questionCount}題的練習記錄，開始第一次練習吧！</div>`;
+            return;
+        }
+        
+        // 按時間排序（最快到最慢）並取前10名
+        const topRecords = filteredRecords
+            .sort((a, b) => a.totalTime - b.totalTime)
+            .slice(0, 10);
+        
+        const recordsHTML = topRecords.map((record, index) => {
+            const rank = index + 1;
+            const { date, time } = this.practiceRecords.formatDateTime(record.date + ' ' + record.startTime);
+            
+            // 獲取排名圖標
+            let rankIcon = '';
+            let rankClass = '';
+            if (rank === 1) {
+                rankIcon = '🏆';
+                rankClass = 'rank-1';
+            } else if (rank === 2) {
+                rankIcon = '🥈';
+                rankClass = 'rank-2';
+            } else if (rank === 3) {
+                rankIcon = '🥉';
+                rankClass = 'rank-3';
+            }
+            
+            return `
+                <div class="leaderboard-item ${rankClass}" data-rank="${rank}">
+                    <div class="rank-section">
+                        <div class="rank-number">${rank}</div>
+                        ${rankIcon ? `<div class="rank-icon">${rankIcon}</div>` : ''}
+                    </div>
+                    <div class="record-info">
+                        <div class="record-datetime">${date} ${record.startTime}</div>
+                    </div>
+                    <div class="record-time">
+                        ${this.practiceRecords.formatTime(record.totalTime)}
+                        <div class="time-detail">${(record.averageTimePerQuestion).toFixed(1)}秒/題</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        recordsList.innerHTML = recordsHTML;
+    }
+
+    // 載入記錄列表（保留舊方法，但不再使用）
     loadRecords() {
         const records = this.practiceRecords.getRecords();
         const recordsList = document.getElementById('records-list');

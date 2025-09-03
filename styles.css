@@ -350,6 +350,171 @@ body {
     font-weight: bold;
 }
 
+/* 排行榜選項卡樣式（仿Strava設計） */
+.leaderboard-tabs {
+    display: flex;
+    gap: 0;
+    margin: var(--spacing-m) 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-tab {
+    flex: 1;
+    padding: var(--spacing-m) var(--spacing-l);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-right: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.leaderboard-tab:last-child {
+    border-right: 1px solid var(--border-color);
+}
+
+.leaderboard-tab:hover {
+    background: rgba(255, 87, 51, 0.05);
+    color: var(--text-color);
+}
+
+.leaderboard-tab.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: inset 0 0 0 2px var(--primary-color);
+}
+
+.leaderboard-tab.active + .leaderboard-tab {
+    border-left-color: var(--primary-color);
+}
+
+/* 排行榜列表樣式 */
+.leaderboard {
+    gap: var(--spacing-xs);
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-m);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: var(--spacing-xs);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.leaderboard-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 排名區域 */
+.rank-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+    margin-right: var(--spacing-m);
+}
+
+.rank-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    line-height: 1;
+}
+
+.rank-icon {
+    font-size: 1.8rem;
+    margin-top: 4px;
+    animation: medalGlow 2s ease-in-out infinite;
+}
+
+@keyframes medalGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* 前三名特殊樣式 */
+.leaderboard-item.rank-1 {
+    background: linear-gradient(135deg, #fff9c4, #fefce8);
+    border: 2px solid #fbbf24;
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+}
+
+.leaderboard-item.rank-2 {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: 2px solid #64748b;
+    box-shadow: 0 4px 16px rgba(100, 116, 139, 0.2);
+}
+
+.leaderboard-item.rank-3 {
+    background: linear-gradient(135deg, #fef3e2, #fed7aa);
+    border: 2px solid #f59e0b;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+}
+
+/* 記錄信息區域 */
+.leaderboard-item .record-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.leaderboard-item .record-datetime {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.leaderboard-item .record-details {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* 時間區域 */
+.leaderboard-item .record-time {
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 80px;
+}
+
+.time-detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: normal;
+    margin-top: 2px;
+}
+
+/* 深色模式適配 */
+@media (prefers-color-scheme: dark) {
+    .leaderboard-item.rank-1 {
+        background: linear-gradient(135deg, #2a2a2a, #333);
+        border-color: #fbbf24;
+    }
+    
+    .leaderboard-item.rank-2 {
+        background: linear-gradient(135deg, #2a2a2a, #333);
+        border-color: #94a3b8;
+    }
+    
+    .leaderboard-item.rank-3 {
+        background: linear-gradient(135deg, #2a2a2a, #333);
+        border-color: #f59e0b;
+    }
+}
+
 .record-info {
     display: flex;
     align-items: center;

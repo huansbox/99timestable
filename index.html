@@ -152,9 +152,15 @@
         <!-- 歷史記錄頁面 -->
         <div id="records-screen" class="records-screen" style="display: none;">
             <div class="records-content">
-                <h1 class="records-title">📚 練習記錄</h1>
+                <h1 class="records-title">🏆 練習排行榜</h1>
                 
-                <div id="records-list" class="records-list">
+                <!-- 切換選項卡 -->
+                <div class="leaderboard-tabs">
+                    <button id="tab-10" class="leaderboard-tab active" data-questions="10">10題</button>
+                    <button id="tab-20" class="leaderboard-tab" data-questions="20">20題</button>
+                </div>
+                
+                <div id="records-list" class="records-list leaderboard">
                     <div class="no-records">還沒有練習記錄，開始第一次練習吧！</div>
                 </div>
                 
