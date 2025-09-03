@@ -247,6 +247,22 @@ class PracticeRecords {
         );
     }
 
+    // 獲取特定記錄在同題數中的排名
+    getRecordRank(record) {
+        const records = this.getRecords();
+        const sameCountRecords = records.filter(r => r.questionCount === record.questionCount);
+        
+        if (sameCountRecords.length === 0) return null;
+        
+        // 按時間排序
+        const sortedRecords = sameCountRecords.sort((a, b) => a.totalTime - b.totalTime);
+        
+        // 找到當前記錄的排名
+        const rank = sortedRecords.findIndex(r => r.id === record.id) + 1;
+        
+        return rank > 0 ? rank : null;
+    }
+
     // 獲取相同題數的最近記錄（用於比較進步）
     getLastRecordWithSameQuestionCount(questionCount) {
         const records = this.getRecords();
@@ -805,16 +821,31 @@ class MultiplicationApp {
             progressText = `<div class="progress-indicator">🎊 第一次練習${this.questionCount}題，加油！</div>`;
         }
         
-        // 獲取最快記錄比較
+        // 獲取最快記錄比較和排名檢查
         const fastestRecord = this.practiceRecords.getFastestRecord(this.questionCount);
+        const currentRank = this.practiceRecords.getRecordRank(record);
         let fastestCompareText = '';
+        let completionClass = '';
         
-        if (fastestRecord && fastestRecord.id === record.id) {
-            // 創造新的最快記錄！
-            fastestCompareText = `<div class="fastest-record-new">🏆 恭喜！你創造了${this.questionCount}題的新紀錄！ 🎉</div>`;
+        // 根據排名顯示不同的慶祝效果
+        if (currentRank === 1) {
+            // 第1名 - 冠軍
+            fastestCompareText = `<div class="rank-achievement rank-1-achievement">🏆 恭喜！你創下${this.questionCount}題最快記錄！ 👑</div>`;
+            completionClass = 'new-record rank-1-celebration';
+        } else if (currentRank === 2) {
+            // 第2名 - 亞軍
+            fastestCompareText = `<div class="rank-achievement rank-2-achievement">🥈 太棒了！你創下${this.questionCount}題第 2 快紀錄！ 🌟</div>`;
+            completionClass = 'rank-2-celebration';
+        } else if (currentRank === 3) {
+            // 第3名 - 季軍
+            fastestCompareText = `<div class="rank-achievement rank-3-achievement">🥉 恭喜！你創下${this.questionCount}題第 3 快紀錄！ ⭐</div>`;
+            completionClass = 'rank-3-celebration';
         } else if (fastestRecord) {
+            // 其他排名 - 顯示與最快記錄的差距
             const fastestDiff = completionTime - fastestRecord.totalTime;
-            if (fastestDiff > 0) {
+            if (currentRank && currentRank <= 10) {
+                fastestCompareText = `<div class="fastest-record-compare">🎯 太棒了！你排名第${currentRank}名！</div>`;
+            } else if (fastestDiff > 0) {
                 fastestCompareText = `<div class="fastest-record-compare">🏃‍♂️ 距離最快記錄還有${fastestDiff}秒，繼續加油！</div>`;
             } else if (fastestDiff === 0) {
                 fastestCompareText = `<div class="fastest-record-compare">🏆 平了最快記錄！太棒了！</div>`;
@@ -823,7 +854,7 @@ class MultiplicationApp {
         
         const appEl = document.getElementById('app');
         appEl.innerHTML = `
-            <div class="completion ${fastestRecord && fastestRecord.id === record.id ? 'new-record' : ''}">
+            <div class="completion ${completionClass}">
                 <h1>🎉 恭喜完成！</h1>
                 <div class="completion-stats">
                     <p>總共花費時間：<strong>${minutes > 0 ? minutes + '分' : ''}${seconds}秒</strong></p>

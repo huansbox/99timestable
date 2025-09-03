@@ -947,6 +947,40 @@ body {
     animation: recordCelebration 3s ease-in-out;
 }
 
+/* 排名成就樣式 */
+.rank-achievement {
+    border-radius: 12px;
+    padding: var(--spacing-m);
+    margin: var(--spacing-m) 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.rank-1-achievement {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff9e6 100%);
+    border: 2px solid #ffc107;
+    color: #b8860b;
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3);
+    animation: rank1Celebration 3s ease-in-out;
+}
+
+.rank-2-achievement {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border: 2px solid #64748b;
+    color: #475569;
+    box-shadow: 0 6px 16px rgba(100, 116, 139, 0.3);
+    animation: rank2Celebration 3s ease-in-out;
+}
+
+.rank-3-achievement {
+    background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
+    border: 2px solid #f59e0b;
+    color: #92400e;
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+    animation: rank3Celebration 3s ease-in-out;
+}
+
 .fastest-record-compare {
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
     border: 2px solid #0ea5e9;
@@ -979,17 +1013,104 @@ body {
     }
 }
 
-.completion.new-record {
+@keyframes rank1Celebration {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3);
+    }
+    25% { 
+        transform: scale(1.05); 
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.5);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 10px 24px rgba(255, 193, 7, 0.4);
+    }
+    75% { 
+        transform: scale(1.03); 
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.5);
+    }
+}
+
+@keyframes rank2Celebration {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 6px 16px rgba(100, 116, 139, 0.3);
+    }
+    25% { 
+        transform: scale(1.04); 
+        box-shadow: 0 8px 18px rgba(100, 116, 139, 0.4);
+    }
+    50% { 
+        transform: scale(1.01); 
+        box-shadow: 0 9px 20px rgba(100, 116, 139, 0.35);
+    }
+    75% { 
+        transform: scale(1.02); 
+        box-shadow: 0 8px 18px rgba(100, 116, 139, 0.4);
+    }
+}
+
+@keyframes rank3Celebration {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+    }
+    25% { 
+        transform: scale(1.03); 
+        box-shadow: 0 8px 18px rgba(245, 158, 11, 0.4);
+    }
+    50% { 
+        transform: scale(1.01); 
+        box-shadow: 0 9px 20px rgba(245, 158, 11, 0.35);
+    }
+    75% { 
+        transform: scale(1.02); 
+        box-shadow: 0 8px 18px rgba(245, 158, 11, 0.4);
+    }
+}
+
+/* 不同排名的完成頁面背景效果 */
+.completion.new-record, 
+.completion.rank-1-celebration {
     background: radial-gradient(circle at center, rgba(255, 193, 7, 0.1) 0%, transparent 50%);
 }
 
-.completion.new-record h1 {
-    animation: titleGlow 2s ease-in-out infinite;
+.completion.rank-2-celebration {
+    background: radial-gradient(circle at center, rgba(100, 116, 139, 0.08) 0%, transparent 50%);
 }
 
-@keyframes titleGlow {
+.completion.rank-3-celebration {
+    background: radial-gradient(circle at center, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+}
+
+/* 標題發光效果 */
+.completion.new-record h1, 
+.completion.rank-1-celebration h1 {
+    animation: titleGlowGold 2s ease-in-out infinite;
+}
+
+.completion.rank-2-celebration h1 {
+    animation: titleGlowSilver 2s ease-in-out infinite;
+}
+
+.completion.rank-3-celebration h1 {
+    animation: titleGlowBronze 2s ease-in-out infinite;
+}
+
+@keyframes titleGlowGold {
     0%, 100% { text-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
     50% { text-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
+}
+
+@keyframes titleGlowSilver {
+    0%, 100% { text-shadow: 0 0 10px rgba(100, 116, 139, 0.4); }
+    50% { text-shadow: 0 0 20px rgba(100, 116, 139, 0.6); }
+}
+
+@keyframes titleGlowBronze {
+    0%, 100% { text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+    50% { text-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
 }
 
 .restart-btn {
