@@ -196,7 +196,13 @@ class PracticeRecords {
     // 獲取相同題數的最近記錄（用於比較進步）
     getLastRecordWithSameQuestionCount(questionCount) {
         const records = this.getRecords();
-        return records.find(record => record.questionCount === questionCount);
+        // 從後往前找，獲取最新的相同題數記錄
+        for (let i = records.length - 1; i >= 0; i--) {
+            if (records[i].questionCount === questionCount) {
+                return records[i];
+            }
+        }
+        return null;
     }
 
     // 格式化時間顯示
