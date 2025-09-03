@@ -185,12 +185,54 @@ class PracticeRecords {
         const records = this.getRecords();
         records.unshift(record); // 新記錄加在前面
 
-        // 限制最多20筆記錄
+        // 限制最多20筆記錄，但保護最快記錄
         if (records.length > this.maxRecords) {
-            records.splice(this.maxRecords);
+            this.protectFastestRecords(records);
         }
 
         localStorage.setItem(this.storageKey, JSON.stringify(records));
+    }
+
+    // 保護最快記錄不被刪除
+    protectFastestRecords(records) {
+        // 按題數分組，找出每組的最快記錄
+        const fastestByQuestionCount = {};
+        
+        records.forEach(record => {
+            const count = record.questionCount;
+            if (!fastestByQuestionCount[count] || record.totalTime < fastestByQuestionCount[count].totalTime) {
+                fastestByQuestionCount[count] = record;
+            }
+        });
+        
+        const fastestRecords = Object.values(fastestByQuestionCount);
+        
+        // 將記錄分為最快記錄和其他記錄
+        const otherRecords = records.filter(record => 
+            !fastestRecords.some(fastest => fastest.id === record.id)
+        );
+        
+        // 從其他記錄中刪除多餘的記錄
+        const availableSlots = this.maxRecords - fastestRecords.length;
+        if (otherRecords.length > availableSlots) {
+            otherRecords.splice(availableSlots);
+        }
+        
+        // 重新組合：最快記錄 + 其他記錄
+        records.length = 0;
+        records.push(...fastestRecords, ...otherRecords);
+    }
+
+    // 獲取特定題數的最快記錄
+    getFastestRecord(questionCount) {
+        const records = this.getRecords();
+        const sameCountRecords = records.filter(record => record.questionCount === questionCount);
+        
+        if (sameCountRecords.length === 0) return null;
+        
+        return sameCountRecords.reduce((fastest, current) => 
+            current.totalTime < fastest.totalTime ? current : fastest
+        );
     }
 
     // 獲取相同題數的最近記錄（用於比較進步）
@@ -289,13 +331,43 @@ class MultiplicationApp {
             return;
         }
         
-        const recordsHTML = records.slice(0, 10).map(record => {
+        // 按題數分組並找出每組最快記錄
+        const fastestByQuestionCount = {};
+        records.forEach(record => {
+            const count = record.questionCount;
+            if (!fastestByQuestionCount[count] || record.totalTime < fastestByQuestionCount[count].totalTime) {
+                fastestByQuestionCount[count] = record;
+            }
+        });
+        
+        const fastestRecords = Object.values(fastestByQuestionCount);
+        const fastestIds = fastestRecords.map(r => r.id);
+        
+        // 將記錄分為最快記錄和其他記錄
+        const otherRecords = records.filter(record => !fastestIds.includes(record.id));
+        
+        // 排序：最快記錄按時間最短排序，其他記錄按日期排序
+        fastestRecords.sort((a, b) => a.totalTime - b.totalTime);
+        otherRecords.sort((a, b) => new Date(b.date + ' ' + b.startTime) - new Date(a.date + ' ' + a.startTime));
+        
+        // 組合顯示：最快記錄在前，其他記錄在後
+        const allRecordsToShow = [...fastestRecords, ...otherRecords].slice(0, 10);
+        
+        const recordsHTML = allRecordsToShow.map(record => {
             const { date, time } = this.practiceRecords.formatDateTime(record.date + ' ' + record.startTime);
+            const isFastest = fastestIds.includes(record.id);
+            
             return `
-                <div class="record-item">
+                <div class="record-item ${isFastest ? 'fastest-record' : ''}">
                     <div class="record-info">
-                        <div class="record-datetime">${date} ${record.startTime}</div>
-                        <div class="record-details">${record.questionCount}題</div>
+                        <div class="record-datetime">
+                            ${isFastest ? '<span class="champion-icon">🏆</span> ' : ''}
+                            ${date} ${record.startTime}
+                        </div>
+                        <div class="record-details">
+                            ${record.questionCount}題
+                            ${isFastest ? '<span class="fastest-badge">最快記錄</span>' : ''}
+                        </div>
                     </div>
                     <div class="record-time">${this.practiceRecords.formatTime(record.totalTime)}</div>
                 </div>
@@ -613,7 +685,7 @@ class MultiplicationApp {
         };
         this.practiceRecords.saveRecord(record);
         
-        // 獲取進步指標
+        // 獲取進步指標 (與上次比較)
         const lastRecord = this.practiceRecords.getLastRecordWithSameQuestionCount(this.questionCount);
         let progressText = '';
         if (lastRecord && lastRecord.id !== record.id) {
@@ -629,13 +701,30 @@ class MultiplicationApp {
             progressText = `<div class="progress-indicator">🎊 第一次練習${this.questionCount}題，加油！</div>`;
         }
         
+        // 獲取最快記錄比較
+        const fastestRecord = this.practiceRecords.getFastestRecord(this.questionCount);
+        let fastestCompareText = '';
+        
+        if (fastestRecord && fastestRecord.id === record.id) {
+            // 創造新的最快記錄！
+            fastestCompareText = `<div class="fastest-record-new">🏆 恭喜！你創造了${this.questionCount}題的新紀錄！ 🎉</div>`;
+        } else if (fastestRecord) {
+            const fastestDiff = completionTime - fastestRecord.totalTime;
+            if (fastestDiff > 0) {
+                fastestCompareText = `<div class="fastest-record-compare">🏃‍♂️ 距離最快記錄還有${fastestDiff}秒，繼續加油！</div>`;
+            } else if (fastestDiff === 0) {
+                fastestCompareText = `<div class="fastest-record-compare">🏆 平了最快記錄！太棒了！</div>`;
+            }
+        }
+        
         const appEl = document.getElementById('app');
         appEl.innerHTML = `
-            <div class="completion">
+            <div class="completion ${fastestRecord && fastestRecord.id === record.id ? 'new-record' : ''}">
                 <h1>🎉 恭喜完成！</h1>
                 <div class="completion-stats">
                     <p>總共花費時間：<strong>${minutes > 0 ? minutes + '分' : ''}${seconds}秒</strong></p>
                     ${progressText}
+                    ${fastestCompareText}
                 </div>
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
             </div>

@@ -313,6 +313,43 @@ body {
     background: var(--bg-color);
 }
 
+.record-item.fastest-record {
+    background: linear-gradient(135deg, #fff3cd, #f9f9f9);
+    border: 2px solid #ffc107;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+    position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+    .record-item.fastest-record {
+        background: linear-gradient(135deg, #2a2a2a, #333);
+        border: 2px solid #ffc107;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+    }
+}
+
+.champion-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+    animation: shine 2s infinite ease-in-out;
+}
+
+@keyframes shine {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.fastest-badge {
+    display: inline-block;
+    background: #ffc107;
+    color: #000;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+    font-weight: bold;
+}
+
 .record-info {
     display: flex;
     align-items: center;
@@ -727,6 +764,67 @@ body {
     font-size: 1.1rem;
     color: var(--success-color);
     font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(52, 168, 83, 0.2);
+}
+
+.fastest-record-new {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff9e6 100%);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: var(--spacing-m);
+    margin: var(--spacing-m) 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #b8860b;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3);
+    animation: recordCelebration 3s ease-in-out;
+}
+
+.fastest-record-compare {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: var(--spacing-m);
+    margin: var(--spacing-m) 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0369a1;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+@keyframes recordCelebration {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3);
+    }
+    25% { 
+        transform: scale(1.05); 
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.5);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 10px 24px rgba(255, 193, 7, 0.4);
+    }
+    75% { 
+        transform: scale(1.03); 
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.5);
+    }
+}
+
+.completion.new-record {
+    background: radial-gradient(circle at center, rgba(255, 193, 7, 0.1) 0%, transparent 50%);
+}
+
+.completion.new-record h1 {
+    animation: titleGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
+    50% { text-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
 }
 
 .restart-btn {
