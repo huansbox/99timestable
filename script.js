@@ -5,84 +5,84 @@ const questions = [
     // === 結果類型題目：a × b = (?) ===
     
     // 2的乘法
-    { id: 1, num1: 2, num2: 2, answer: 4, type: 'result' },
-    { id: 2, num1: 2, num2: 3, answer: 6, type: 'result' },
-    { id: 3, num1: 2, num2: 4, answer: 8, type: 'result' },
-    { id: 4, num1: 2, num2: 5, answer: 10, type: 'result' },
-    { id: 5, num1: 2, num2: 6, answer: 12, type: 'result' },
-    { id: 6, num1: 2, num2: 7, answer: 14, type: 'result' },
-    { id: 7, num1: 2, num2: 8, answer: 16, type: 'result' },
-    { id: 8, num1: 2, num2: 9, answer: 18, type: 'result' },
+    { id: 1, num1: 2, num2: 2, answer: 4, type: 'result', difficulty: 'easy' },
+    { id: 2, num1: 2, num2: 3, answer: 6, type: 'result', difficulty: 'easy' },
+    { id: 3, num1: 2, num2: 4, answer: 8, type: 'result', difficulty: 'easy' },
+    { id: 4, num1: 2, num2: 5, answer: 10, type: 'result', difficulty: 'easy' },
+    { id: 5, num1: 2, num2: 6, answer: 12, type: 'result', difficulty: 'easy' },
+    { id: 6, num1: 2, num2: 7, answer: 14, type: 'result', difficulty: 'easy' },
+    { id: 7, num1: 2, num2: 8, answer: 16, type: 'result', difficulty: 'easy' },
+    { id: 8, num1: 2, num2: 9, answer: 18, type: 'result', difficulty: 'easy' },
     
     // 3的乘法
-    { id: 9, num1: 3, num2: 2, answer: 6, type: 'result' },
-    { id: 10, num1: 3, num2: 3, answer: 9, type: 'result' },
-    { id: 11, num1: 3, num2: 4, answer: 12, type: 'result' },
-    { id: 12, num1: 3, num2: 5, answer: 15, type: 'result' },
-    { id: 13, num1: 3, num2: 6, answer: 18, type: 'result' },
-    { id: 14, num1: 3, num2: 7, answer: 21, type: 'result' },
-    { id: 15, num1: 3, num2: 8, answer: 24, type: 'result' },
-    { id: 16, num1: 3, num2: 9, answer: 27, type: 'result' },
+    { id: 9, num1: 3, num2: 2, answer: 6, type: 'result', difficulty: 'easy' },
+    { id: 10, num1: 3, num2: 3, answer: 9, type: 'result', difficulty: 'easy' },
+    { id: 11, num1: 3, num2: 4, answer: 12, type: 'result', difficulty: 'hard' },
+    { id: 12, num1: 3, num2: 5, answer: 15, type: 'result', difficulty: 'hard' },
+    { id: 13, num1: 3, num2: 6, answer: 18, type: 'result', difficulty: 'hard' },
+    { id: 14, num1: 3, num2: 7, answer: 21, type: 'result', difficulty: 'hard' },
+    { id: 15, num1: 3, num2: 8, answer: 24, type: 'result', difficulty: 'hard' },
+    { id: 16, num1: 3, num2: 9, answer: 27, type: 'result', difficulty: 'hard' },
     
     // 4的乘法
-    { id: 17, num1: 4, num2: 2, answer: 8, type: 'result' },
-    { id: 18, num1: 4, num2: 3, answer: 12, type: 'result' },
-    { id: 19, num1: 4, num2: 4, answer: 16, type: 'result' },
-    { id: 20, num1: 4, num2: 5, answer: 20, type: 'result' },
-    { id: 21, num1: 4, num2: 6, answer: 24, type: 'result' },
-    { id: 22, num1: 4, num2: 7, answer: 28, type: 'result' },
-    { id: 23, num1: 4, num2: 8, answer: 32, type: 'result' },
-    { id: 24, num1: 4, num2: 9, answer: 36, type: 'result' },
+    { id: 17, num1: 4, num2: 2, answer: 8, type: 'result', difficulty: 'easy' },
+    { id: 18, num1: 4, num2: 3, answer: 12, type: 'result', difficulty: 'hard' },
+    { id: 19, num1: 4, num2: 4, answer: 16, type: 'result', difficulty: 'hard' },
+    { id: 20, num1: 4, num2: 5, answer: 20, type: 'result', difficulty: 'hard' },
+    { id: 21, num1: 4, num2: 6, answer: 24, type: 'result', difficulty: 'hard' },
+    { id: 22, num1: 4, num2: 7, answer: 28, type: 'result', difficulty: 'hard' },
+    { id: 23, num1: 4, num2: 8, answer: 32, type: 'result', difficulty: 'hard' },
+    { id: 24, num1: 4, num2: 9, answer: 36, type: 'result', difficulty: 'hard' },
     
     // 5的乘法
-    { id: 25, num1: 5, num2: 2, answer: 10, type: 'result' },
-    { id: 26, num1: 5, num2: 3, answer: 15, type: 'result' },
-    { id: 27, num1: 5, num2: 4, answer: 20, type: 'result' },
-    { id: 28, num1: 5, num2: 5, answer: 25, type: 'result' },
-    { id: 29, num1: 5, num2: 6, answer: 30, type: 'result' },
-    { id: 30, num1: 5, num2: 7, answer: 35, type: 'result' },
-    { id: 31, num1: 5, num2: 8, answer: 40, type: 'result' },
-    { id: 32, num1: 5, num2: 9, answer: 45, type: 'result' },
+    { id: 25, num1: 5, num2: 2, answer: 10, type: 'result', difficulty: 'easy' },
+    { id: 26, num1: 5, num2: 3, answer: 15, type: 'result', difficulty: 'hard' },
+    { id: 27, num1: 5, num2: 4, answer: 20, type: 'result', difficulty: 'hard' },
+    { id: 28, num1: 5, num2: 5, answer: 25, type: 'result', difficulty: 'hard' },
+    { id: 29, num1: 5, num2: 6, answer: 30, type: 'result', difficulty: 'hard' },
+    { id: 30, num1: 5, num2: 7, answer: 35, type: 'result', difficulty: 'hard' },
+    { id: 31, num1: 5, num2: 8, answer: 40, type: 'result', difficulty: 'hard' },
+    { id: 32, num1: 5, num2: 9, answer: 45, type: 'result', difficulty: 'hard' },
     
     // 6的乘法
-    { id: 33, num1: 6, num2: 2, answer: 12, type: 'result' },
-    { id: 34, num1: 6, num2: 3, answer: 18, type: 'result' },
-    { id: 35, num1: 6, num2: 4, answer: 24, type: 'result' },
-    { id: 36, num1: 6, num2: 5, answer: 30, type: 'result' },
-    { id: 37, num1: 6, num2: 6, answer: 36, type: 'result' },
-    { id: 38, num1: 6, num2: 7, answer: 42, type: 'result' },
-    { id: 39, num1: 6, num2: 8, answer: 48, type: 'result' },
-    { id: 40, num1: 6, num2: 9, answer: 54, type: 'result' },
+    { id: 33, num1: 6, num2: 2, answer: 12, type: 'result', difficulty: 'easy' },
+    { id: 34, num1: 6, num2: 3, answer: 18, type: 'result', difficulty: 'hard' },
+    { id: 35, num1: 6, num2: 4, answer: 24, type: 'result', difficulty: 'hard' },
+    { id: 36, num1: 6, num2: 5, answer: 30, type: 'result', difficulty: 'hard' },
+    { id: 37, num1: 6, num2: 6, answer: 36, type: 'result', difficulty: 'hard' },
+    { id: 38, num1: 6, num2: 7, answer: 42, type: 'result', difficulty: 'hard' },
+    { id: 39, num1: 6, num2: 8, answer: 48, type: 'result', difficulty: 'hard' },
+    { id: 40, num1: 6, num2: 9, answer: 54, type: 'result', difficulty: 'hard' },
     
     // 7的乘法
-    { id: 41, num1: 7, num2: 2, answer: 14, type: 'result' },
-    { id: 42, num1: 7, num2: 3, answer: 21, type: 'result' },
-    { id: 43, num1: 7, num2: 4, answer: 28, type: 'result' },
-    { id: 44, num1: 7, num2: 5, answer: 35, type: 'result' },
-    { id: 45, num1: 7, num2: 6, answer: 42, type: 'result' },
-    { id: 46, num1: 7, num2: 7, answer: 49, type: 'result' },
-    { id: 47, num1: 7, num2: 8, answer: 56, type: 'result' },
-    { id: 48, num1: 7, num2: 9, answer: 63, type: 'result' },
+    { id: 41, num1: 7, num2: 2, answer: 14, type: 'result', difficulty: 'easy' },
+    { id: 42, num1: 7, num2: 3, answer: 21, type: 'result', difficulty: 'hard' },
+    { id: 43, num1: 7, num2: 4, answer: 28, type: 'result', difficulty: 'hard' },
+    { id: 44, num1: 7, num2: 5, answer: 35, type: 'result', difficulty: 'hard' },
+    { id: 45, num1: 7, num2: 6, answer: 42, type: 'result', difficulty: 'hard' },
+    { id: 46, num1: 7, num2: 7, answer: 49, type: 'result', difficulty: 'hard' },
+    { id: 47, num1: 7, num2: 8, answer: 56, type: 'result', difficulty: 'hard' },
+    { id: 48, num1: 7, num2: 9, answer: 63, type: 'result', difficulty: 'hard' },
     
     // 8的乘法
-    { id: 49, num1: 8, num2: 2, answer: 16, type: 'result' },
-    { id: 50, num1: 8, num2: 3, answer: 24, type: 'result' },
-    { id: 51, num1: 8, num2: 4, answer: 32, type: 'result' },
-    { id: 52, num1: 8, num2: 5, answer: 40, type: 'result' },
-    { id: 53, num1: 8, num2: 6, answer: 48, type: 'result' },
-    { id: 54, num1: 8, num2: 7, answer: 56, type: 'result' },
-    { id: 55, num1: 8, num2: 8, answer: 64, type: 'result' },
-    { id: 56, num1: 8, num2: 9, answer: 72, type: 'result' },
+    { id: 49, num1: 8, num2: 2, answer: 16, type: 'result', difficulty: 'easy' },
+    { id: 50, num1: 8, num2: 3, answer: 24, type: 'result', difficulty: 'hard' },
+    { id: 51, num1: 8, num2: 4, answer: 32, type: 'result', difficulty: 'hard' },
+    { id: 52, num1: 8, num2: 5, answer: 40, type: 'result', difficulty: 'hard' },
+    { id: 53, num1: 8, num2: 6, answer: 48, type: 'result', difficulty: 'hard' },
+    { id: 54, num1: 8, num2: 7, answer: 56, type: 'result', difficulty: 'hard' },
+    { id: 55, num1: 8, num2: 8, answer: 64, type: 'result', difficulty: 'hard' },
+    { id: 56, num1: 8, num2: 9, answer: 72, type: 'result', difficulty: 'hard' },
     
     // 9的乘法
-    { id: 57, num1: 9, num2: 2, answer: 18, type: 'result' },
-    { id: 58, num1: 9, num2: 3, answer: 27, type: 'result' },
-    { id: 59, num1: 9, num2: 4, answer: 36, type: 'result' },
-    { id: 60, num1: 9, num2: 5, answer: 45, type: 'result' },
-    { id: 61, num1: 9, num2: 6, answer: 54, type: 'result' },
-    { id: 62, num1: 9, num2: 7, answer: 63, type: 'result' },
-    { id: 63, num1: 9, num2: 8, answer: 72, type: 'result' },
-    { id: 64, num1: 9, num2: 9, answer: 81, type: 'result' },
+    { id: 57, num1: 9, num2: 2, answer: 18, type: 'result', difficulty: 'easy' },
+    { id: 58, num1: 9, num2: 3, answer: 27, type: 'result', difficulty: 'hard' },
+    { id: 59, num1: 9, num2: 4, answer: 36, type: 'result', difficulty: 'hard' },
+    { id: 60, num1: 9, num2: 5, answer: 45, type: 'result', difficulty: 'hard' },
+    { id: 61, num1: 9, num2: 6, answer: 54, type: 'result', difficulty: 'hard' },
+    { id: 62, num1: 9, num2: 7, answer: 63, type: 'result', difficulty: 'hard' },
+    { id: 63, num1: 9, num2: 8, answer: 72, type: 'result', difficulty: 'hard' },
+    { id: 64, num1: 9, num2: 9, answer: 81, type: 'result', difficulty: 'hard' },
     
     // === 因數類型題目：a × (?) = result ===
     
@@ -499,8 +499,27 @@ class MultiplicationApp {
 
     // 從完整題庫中隨機選取指定數量的題目
     getRandomQuestions(count) {
-        const shuffled = [...questions].sort(() => Math.random() - 0.5);
-        return shuffled.slice(0, count);
+        if (count === 10) {
+            // 10題模式：只從結果類型選取，前2題普通+後8題困難
+            const resultQuestions = questions.filter(q => q.type === 'result');
+            const easyQuestions = resultQuestions.filter(q => q.difficulty === 'easy');
+            const hardQuestions = resultQuestions.filter(q => q.difficulty === 'hard');
+            
+            // 隨機選取2題普通題目
+            const shuffledEasy = [...easyQuestions].sort(() => Math.random() - 0.5);
+            const selectedEasy = shuffledEasy.slice(0, 2);
+            
+            // 隨機選取8題困難題目
+            const shuffledHard = [...hardQuestions].sort(() => Math.random() - 0.5);
+            const selectedHard = shuffledHard.slice(0, 8);
+            
+            // 組合並返回（前2題普通，後8題困難）
+            return [...selectedEasy, ...selectedHard];
+        } else {
+            // 20題模式：維持原有邏輯
+            const shuffled = [...questions].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
     }
 
     startPractice() {
