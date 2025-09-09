@@ -460,11 +460,9 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 - ✅ 進度追蹤準確
 
 #### 相容性測試
-- ✅ iPad Pro 10.5" (Safari) - 橫式佈局修復
-- ✅ iPad 滾動問題完全修復，無法意外滾動到其他頁面
-- ✅ iPad 觸控事件正常，返回按鈕響應正確
-- ✅ 桌面版 Chrome/Safari/Firefox - 完整功能支援
-- ✅ 手機版 Safari/Chrome
+- ✅ **桌面電腦** - Chrome/Safari/Firefox 完整功能支援，畫面顯示完美
+- ✅ **iPad Pro/iPad** - Safari 橫式和直向佈局最佳化，觸控體驗優化，畫面顯示完美
+- ⚠️ **iPhone手機版** - 基本功能正常，但版面配置和觸控體驗仍有優化空間（待後續改進）
 - ✅ 橫向/直向模式切換
 - ✅ PWA加入主畫面模式
 
@@ -523,7 +521,7 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 ## 📂 工作目錄設定說明
 
 **重要**：本專案已切換到Git同步工作流程
-- **工作目錄**：`D:\mywork\99times`（已連接GitHub repository）
+- **工作目錄**：`D:\mywork\01_active\99times`（已連接GitHub repository）
 - **自動化流程**：修改檔案 → commit確認 → 自動push到GitHub
 - **GitHub同步**：https://github.com/huansbox/99timestable
 - **操作方式**：每次修改後輸入"commit"即可自動提交並推送
