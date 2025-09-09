@@ -6,7 +6,8 @@
       "Read(D:\\mywork\\99times-sync/**)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Read(C:\\Users\\linshuhuan\\.claude/**)"
     ],
     "deny": [],
     "ask": []
