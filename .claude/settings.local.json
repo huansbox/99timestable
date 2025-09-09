@@ -1,13 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Read(D:\\mywork\\99times-sync/**)",
-      "Read(D:\\mywork\\99times-sync/**)",
-      "Read(D:\\mywork\\99times-sync/**)",
+      "Read(D:\\mywork\\01_active\\99times/**)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Read(C:\\Users\\linshuhuan\\.claude/**)"
+      "Read(C:\\Users\\linshuhuan\\.claude/**)",
+      "Bash(move:*)"
     ],
     "deny": [],
     "ask": []
