@@ -9,7 +9,8 @@
       "Bash(move:*)",
       "Bash(git pull:*)",
       "Bash(start index.html)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []
