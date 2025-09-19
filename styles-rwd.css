@@ -991,8 +991,8 @@ body {
     }
 }
 
-/* === 桌面模式 (1024px+) === */
-@media screen and (min-width: 1024px) {
+/* === 桌面模式 (1024px+ 滑鼠操作) === */
+@media screen and (min-width: 1024px) and (pointer: fine) {
     :root {
         /* 桌面字體調整 */
         --font-size-title: 1.8rem;
@@ -1127,5 +1127,63 @@ body {
 
     .question-container {
         padding: calc(var(--spacing-xl) * 2);
+    }
+}
+
+/* === 觸控裝置強制顯示虛擬鍵盤 === */
+@media screen and (pointer: coarse) {
+    .number-pad {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+/* === iPad Pro 等大螢幕觸控裝置 (1024px+ 觸控) === */
+@media screen and (min-width: 1024px) and (pointer: coarse) {
+    :root {
+        /* 大螢幕觸控裝置字體 */
+        --font-size-question: 2.2rem;
+        --font-size-input: 2rem;
+        --touch-target-large: 90px;
+    }
+
+    /* iPad Pro 橫向模式優化 */
+    @media (orientation: landscape) {
+        .practice-container {
+            display: grid !important;
+            grid-template-columns: 2fr 1fr !important;
+            grid-template-rows: auto auto 1fr !important;
+            gap: var(--spacing-l) !important;
+            height: calc(var(--vh, 1vh) * 100) !important;
+            padding: var(--spacing-m) !important;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            grid-row: 1;
+        }
+
+        .progress-container {
+            grid-column: 1 / -1;
+            grid-row: 2;
+        }
+
+        .question-container {
+            grid-column: 1;
+            grid-row: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: auto;
+        }
+
+        .number-pad {
+            grid-column: 2;
+            grid-row: 3;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+        }
     }
 }
