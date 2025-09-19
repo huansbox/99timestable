@@ -8,7 +8,8 @@
       "Read(C:\\Users\\linshuhuan\\.claude/**)",
       "Bash(move:*)",
       "Bash(git pull:*)",
-      "Bash(start index.html)"
+      "Bash(start index.html)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
