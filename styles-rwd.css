@@ -968,11 +968,12 @@ body {
         --font-size-button: 1.2rem;
         --font-size-progress: 1rem;
         --touch-target-large: 50px;
-        --container-max: 1200px;
+        --container-max: 1400px;
     }
 
     .app-container {
-        padding: var(--spacing-l);
+        max-width: var(--container-max);
+        padding: var(--spacing-l) var(--spacing-xl);
     }
 
     .start-content {
@@ -986,26 +987,27 @@ body {
     /* 桌面練習佈局 */
     .practice-container {
         display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-        grid-template-rows: auto auto 1fr auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
         gap: var(--spacing-l);
         height: 100vh;
-        max-height: 800px;
+        max-width: none;
+        padding: var(--spacing-l) var(--spacing-xl);
         margin: 0 auto;
     }
 
     .header {
-        grid-column: 1 / -1;
+        grid-column: 1;
         grid-row: 1;
     }
 
     .progress-container {
-        grid-column: 1 / -1;
+        grid-column: 1;
         grid-row: 2;
     }
 
     .question-container {
-        grid-column: 2;
+        grid-column: 1;
         grid-row: 3;
         display: flex;
         flex-direction: column;
@@ -1033,9 +1035,17 @@ body {
         opacity: 0.8;
     }
 
-    /* 啟用桌面版輸入框 */
+    /* 桌面版答案輸入區優化 */
+    .answer-container {
+        max-width: 350px;
+        margin: 0 auto;
+    }
+
     .answer-input {
         cursor: text;
+        max-width: 200px;
+        font-size: 1.5rem;
+        padding: 0.75rem;
     }
 
     .answer-input:hover {
@@ -1043,9 +1053,10 @@ body {
     }
 
     .submit-btn {
-        padding: var(--spacing-s) var(--spacing-m);
+        padding: 0.75rem 1.5rem;
         min-width: 100px;
         height: auto;
+        font-size: 1.2rem;
     }
 
     .submit-btn:hover {
@@ -1078,7 +1089,7 @@ body {
 /* === 超寬螢幕 (1920px+) === */
 @media screen and (min-width: 1920px) {
     .app-container {
-        max-width: 1600px;
+        max-width: 1400px;
     }
 
     .question-container {
