@@ -1,6 +1,18 @@
 // 九九乘法表練習 - 完整題庫
 // 包含2×2到9×9的所有組合，結果類型和因數類型各64題，共128題
 
+// 解決iOS Safari vh跳動問題
+function setVhVariable() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// 頁面載入時執行一次
+setVhVariable();
+
+// 當視窗大小改變時再次執行
+window.addEventListener('resize', setVhVariable);
+
 const questions = [
     // === 結果類型題目：a × b = (?) ===
     

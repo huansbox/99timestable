@@ -1,0 +1,98 @@
+
+  1. height: 100vh 在行動裝置上的問題
+
+
+   * 問題: 您在 .start-screen, .records-screen, .practice-container 中使用了 height: 100vh。在手機瀏覽器上（尤其是 Safari），當使用者滾動頁面，導致瀏覽器的網址列收合或展開時，1vh
+     的實際像素值會發生變化，這會造成整個頁面高度突然「跳動一下」的惱人問題。
+  `javascript
+      function setVhVariable() {
+          let vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', ${vh}px);
+      }
+
+      // 頁面載入時執行一次
+      setVhVariable();
+
+      // 當視窗大小改變時再次執行
+      window.addEventListener('resize', setVhVariable);
+      `
+
+      然後在您的 CSS 中，將 height: 100vh 修改為：
+
+  `css
+      / 範例 /
+      .practice-container {
+          display: flex;
+          flex-direction: column;
+          / 使用 calc() 和我們自訂的 --vh 變數 /
+          height: calc(var(--vh, 1vh) * 100);
+          gap: var(--spacing-s);
+      }
+      `
+      var(--vh, 1vh) 的意思是優先使用 --vh，如果 JS 因故未執行，則降級回退到 1vh。這樣就能徹底解決行動裝置上的高度跳動問題。
+
+  2. CSS calc() 語法錯誤
+
+
+   * 問題: 在幾個媒體查詢中，您嘗試對 CSS 變數進行數學運算，但缺少了 calc() 函數。瀏覽器會忽略這些無效的屬性。
+  `css
+      .start-content {
+          padding: var(--spacing-xl) * 1.5;
+      }
+      .question-container {
+          padding: var(--spacing-xl) * 1.5;
+      }
+      `
+
+      正確的寫法：
+
+  `css
+      .start-content {
+          padding: calc(var(--spacing-xl) * 1.5);
+      }
+      .question-container {
+          padding: calc(var(--spacing-xl) * 1.5);
+      }
+      `
+      請檢查 768px 和 1920px 的斷點，將所有 * 1.5 或 * 2 的地方都修正。
+
+  3. !important 的使用
+
+
+   * 問題: 您在平版橫向模式 (display: grid !important;) 和桌面模式 (display: none !important;) 中使用了 !important。雖然在這裡它能正常運作，但過度使用 !important 會增加未來維護的複雜度，因為它會破壞正常的 CSS 優先級規則。
+  這份 RWD 架構設計得非常出色、穩健且具前瞻性。它不僅滿足了基本的跨裝置顯示需求，還融入了許多能顯著提升使用者體驗的現代技術。
+
+  4. 容器寬度跳躍問題
+
+  - 768px 時 max-width: 1000px
+  - 1024px 時突然變成 1400px
+  - 影響：在 768px-1024px 之間會有明顯的版面跳躍
+
+  5. 觸控按鈕尺寸不一致
+
+  - 手機：60px → 平板：80px → 桌面：50px
+  - 影響：桌面版反而變小，違反漸進增強原則
+
+  6. 平板橫向佈局潛在問題
+
+  - 使用過多 !important (行919、948)
+  - Grid 比例 1.5fr:1fr 可能讓鍵盤在某些尺寸過小
+
+  7. 中間斷點缺失
+
+  - 768px 直接跳到 1024px，缺少 900px 左右的斷點
+  - 影響：iPad Mini (820px) 等裝置可能顯示不理想
+
+  8. 深色模式區分度不足
+
+  /* 行845-847：前三名在深色模式都相同 */
+  .leaderboard-item.rank-1,
+  .leaderboard-item.rank-2,
+  .leaderboard-item.rank-3 {
+      background: linear-gradient(135deg, #2a2a2a, #333);
+  }
+
+  9. 小螢幕字體可讀性
+
+  - clamp(1rem, 2.5vw, 1.2rem) 在 320px 螢幕只有 8px
+  - 可能過小影響閱讀

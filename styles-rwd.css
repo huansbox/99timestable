@@ -54,7 +54,7 @@ body {
 
 /* === 主容器（基礎：手機） === */
 .app-container {
-    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
     display: flex;
     flex-direction: column;
     max-width: var(--container-max);
@@ -64,7 +64,7 @@ body {
 
 /* === 開始設定頁面 === */
 .start-screen {
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -252,7 +252,7 @@ body {
 
 /* === 歷史記錄頁面 === */
 .records-screen {
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -409,7 +409,7 @@ body {
 .practice-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     gap: var(--spacing-s);
 }
 
@@ -886,7 +886,7 @@ body {
 
     .start-content {
         max-width: 500px;
-        padding: var(--spacing-xl) * 1.5;
+        padding: calc(var(--spacing-xl) * 1.5);
     }
 
     .records-content {
@@ -899,7 +899,7 @@ body {
     }
 
     .question-container {
-        padding: var(--spacing-xl) * 1.5;
+        padding: calc(var(--spacing-xl) * 1.5);
         min-height: 350px;
     }
 
@@ -917,10 +917,10 @@ body {
     @media (orientation: landscape) {
         .practice-container {
             display: grid !important;
-            grid-template-columns: 1.5fr 1fr;
+            grid-template-columns: 2fr 1fr;
             grid-template-rows: auto auto 1fr;
             gap: var(--spacing-l);
-            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             padding: var(--spacing-m);
         }
 
@@ -958,6 +958,39 @@ body {
     }
 }
 
+/* === 中型平板模式 (900px+) - 優化 iPad Mini === */
+@media screen and (min-width: 900px) {
+    :root {
+        --container-max: 1200px;
+        --font-size-question: 1.8rem;
+        --touch-target-large: 70px;
+    }
+
+    .app-container {
+        max-width: var(--container-max);
+        padding: var(--spacing-l);
+    }
+
+    .start-content {
+        max-width: 550px;
+        padding: calc(var(--spacing-xl) * 1.2);
+    }
+
+    .question-container {
+        padding: calc(var(--spacing-xl) * 1.2);
+        min-height: 300px;
+    }
+
+    .answer-container {
+        max-width: 350px;
+    }
+
+    .number-btn {
+        width: var(--touch-target-large);
+        height: var(--touch-target-large);
+    }
+}
+
 /* === 桌面模式 (1024px+) === */
 @media screen and (min-width: 1024px) {
     :root {
@@ -990,7 +1023,7 @@ body {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto 1fr;
         gap: var(--spacing-l);
-        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
         max-width: none;
         padding: var(--spacing-l) var(--spacing-xl);
         margin: 0 auto;
@@ -1093,6 +1126,6 @@ body {
     }
 
     .question-container {
-        padding: var(--spacing-xl) * 2;
+        padding: calc(var(--spacing-xl) * 2);
     }
 }
