@@ -622,6 +622,10 @@ class MultiplicationApp {
         const showVirtualKeyboard = document.getElementById('show-virtual-keyboard').checked;
         this.inputMethod = showVirtualKeyboard ? 'both' : 'voice';
 
+        // 讀取自動語音設定
+        const autoVoiceCheckbox = document.getElementById('auto-voice');
+        this.autoVoiceEnabled = autoVoiceCheckbox ? autoVoiceCheckbox.checked : false;
+
         // 判斷是否為練習模式
         this.practiceMode = (questionCountValue === 'practice');
 
@@ -730,6 +734,7 @@ class MultiplicationApp {
 
         // 語音識別狀態
         this.isListening = false;
+        this.shouldAutoRestart = false;
 
         // 事件處理
         this.recognition.onstart = () => {
@@ -774,6 +779,13 @@ class MultiplicationApp {
             console.log('語音識別結束');
             this.isListening = false;
             this.updateMicButton();
+
+            // 如果啟用自動語音且應該繼續監聽
+            if (this.autoVoiceEnabled && this.shouldAutoRestart) {
+                setTimeout(() => {
+                    this.startVoiceRecognition();
+                }, 500); // 0.5秒後自動重啟
+            }
         };
     }
 
@@ -877,6 +889,19 @@ class MultiplicationApp {
         }
     }
 
+    startVoiceRecognition() {
+        if (!this.recognition) {
+            console.warn('語音識別未初始化');
+            return;
+        }
+
+        try {
+            this.recognition.start();
+        } catch (error) {
+            console.error('啟動語音識別失敗:', error);
+        }
+    }
+
     updateMicButton() {
         const micButton = document.getElementById('mic-input-btn');
         if (!micButton) return;
@@ -937,10 +962,22 @@ class MultiplicationApp {
         const micButton = document.getElementById('mic-input-btn');
         if (micButton) {
             micButton.addEventListener('click', () => {
-                if (this.isListening) {
-                    this.stopListening();
+                if (!this.autoVoiceEnabled) {
+                    // 手動模式：正常開關
+                    if (this.isListening) {
+                        this.stopListening();
+                    } else {
+                        this.startListening();
+                    }
                 } else {
-                    this.startListening();
+                    // 自動模式下：點擊按鈕切換暫停/繼續
+                    if (this.isListening) {
+                        this.shouldAutoRestart = false;
+                        this.recognition.stop();
+                    } else {
+                        this.shouldAutoRestart = true;
+                        this.startVoiceRecognition();
+                    }
                 }
             });
         }
@@ -1082,6 +1119,14 @@ class MultiplicationApp {
 
         // 重置樣式
         this.resetFeedback();
+
+        // 如果啟用自動語音，自動開始監聽
+        if (this.autoVoiceEnabled && (this.inputMethod === 'voice' || this.inputMethod === 'both')) {
+            this.shouldAutoRestart = true;
+            setTimeout(() => {
+                this.startVoiceRecognition();
+            }, 300); // 給一點時間讓題目顯示
+        }
     }
 
     checkAnswer(source = 'keyboard', voiceNumber = null) {
@@ -1104,6 +1149,12 @@ class MultiplicationApp {
         this.totalAttempts++;
 
         if (userAnswer === correctAnswer) {
+            // 答對時停止自動重啟
+            this.shouldAutoRestart = false;
+            if (this.recognition && this.isListening) {
+                this.recognition.stop(); // 停止監聽
+            }
+
             this.showCorrectFeedback();
             // 所有裝置都在1.2秒後自動進入下一題
             setTimeout(() => {
