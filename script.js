@@ -516,15 +516,15 @@ class MultiplicationApp {
             const resultQuestions = questions.filter(q => q.type === 'result');
             const easyQuestions = resultQuestions.filter(q => q.difficulty === 'easy');
             const hardQuestions = resultQuestions.filter(q => q.difficulty === 'hard');
-            
+
             // 隨機選取2題普通題目
             const shuffledEasy = [...easyQuestions].sort(() => Math.random() - 0.5);
             const selectedEasy = shuffledEasy.slice(0, 2);
-            
+
             // 隨機選取8題困難題目
             const shuffledHard = [...hardQuestions].sort(() => Math.random() - 0.5);
             const selectedHard = shuffledHard.slice(0, 8);
-            
+
             // 組合並返回（前2題普通，後8題困難）
             return [...selectedEasy, ...selectedHard];
         } else {
@@ -534,14 +534,45 @@ class MultiplicationApp {
         }
     }
 
+    // 練習模式：按九九乘法表順序生成題目
+    generatePracticeQuestions() {
+        const practiceQuestions = [];
+
+        // 生成 2×1 到 9×9 的順序題目（只生成結果類型題目）
+        for (let num1 = 2; num1 <= 9; num1++) {
+            for (let num2 = 1; num2 <= 9; num2++) {
+                practiceQuestions.push({
+                    id: practiceQuestions.length + 1,
+                    num1: num1,
+                    num2: num2,
+                    answer: num1 * num2,
+                    type: 'result'
+                });
+            }
+        }
+
+        return practiceQuestions;
+    }
+
     startPractice() {
         // 獲取設定
-        this.showTimer = document.getElementById('show-timer').checked;
         const questionCountRadio = document.querySelector('input[name="question-count"]:checked');
-        this.questionCount = parseInt(questionCountRadio.value);
+        const questionCountValue = questionCountRadio.value;
 
-        // 從完整題庫中隨機選取指定數量的題目
-        this.currentQuestions = this.getRandomQuestions(this.questionCount);
+        // 判斷是否為練習模式
+        this.practiceMode = (questionCountValue === 'practice');
+
+        if (this.practiceMode) {
+            // 練習模式：不計時，不記錄排行榜
+            this.showTimer = false;
+            this.questionCount = 72; // 2×1 到 9×9 共 72 題
+            this.currentQuestions = this.generatePracticeQuestions();
+        } else {
+            // 一般模式：按原有邏輯
+            this.showTimer = document.getElementById('show-timer').checked;
+            this.questionCount = parseInt(questionCountValue);
+            this.currentQuestions = this.getRandomQuestions(this.questionCount);
+        }
 
         // 隱藏開始頁面，顯示練習頁面
         document.getElementById('start-screen').style.display = 'none';
@@ -818,12 +849,18 @@ class MultiplicationApp {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
-        
+
+        if (this.practiceMode) {
+            // 練習模式：簡化的完成頁面，不保存記錄
+            this.showPracticeCompletion();
+            return;
+        }
+
         const completionTime = Math.round((Date.now() - this.startTime) / 1000);
         const minutes = Math.floor(completionTime / 60);
         const seconds = completionTime % 60;
         const averageTime = Math.round(completionTime / this.questionCount * 10) / 10;
-        
+
         // 保存練習記錄
         const now = new Date();
         const record = {
@@ -835,14 +872,14 @@ class MultiplicationApp {
             averageTimePerQuestion: averageTime
         };
         this.practiceRecords.saveRecord(record);
-        
-        
+
+
         // 獲取最快記錄比較和排名檢查
         const fastestRecord = this.practiceRecords.getFastestRecord(this.questionCount);
         const currentRank = this.practiceRecords.getRecordRank(record);
         let fastestCompareText = '';
         let completionClass = '';
-        
+
         // 根據排名顯示不同的慶祝效果
         if (currentRank === 1) {
             // 第1名 - 冠軍
@@ -877,6 +914,26 @@ class MultiplicationApp {
                     ${fastestCompareText}
                 </div>
                 <button onclick="location.reload()" class="restart-btn">重新練習</button>
+            </div>
+        `;
+    }
+
+    // 練習模式完成頁面
+    showPracticeCompletion() {
+        const appEl = document.getElementById('app');
+        appEl.innerHTML = `
+            <div class="completion">
+                <h1>🎉 練習完成！</h1>
+                <div class="completion-stats">
+                    <p>🌟 恭喜完成 72 道九九乘法表練習！</p>
+                    <p style="color: var(--text-secondary); margin-top: var(--spacing-m);">
+                        從 2×1 到 9×9，你已經熟練掌握了所有基礎乘法！
+                    </p>
+                </div>
+                <div style="display: flex; gap: var(--spacing-m); flex-wrap: wrap; justify-content: center; margin-top: var(--spacing-xl);">
+                    <button onclick="location.reload()" class="restart-btn">再練習一次</button>
+                    <button onclick="location.reload()" class="view-records-btn">返回首頁</button>
+                </div>
             </div>
         `;
     }

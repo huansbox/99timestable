@@ -191,6 +191,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-s);
+    justify-content: center;
 }
 
 .radio-label {
@@ -200,6 +201,9 @@ body {
     min-height: var(--touch-target);
     display: flex;
     align-items: center;
+    flex: 1 1 auto;
+    min-width: 80px;
+    justify-content: center;
 }
 
 /* 按鈕樣式 */
@@ -892,6 +896,15 @@ body {
     .records-content {
         max-width: 600px;
         padding: var(--spacing-xl);
+    }
+
+    .radio-group {
+        gap: var(--spacing-m);
+    }
+
+    .radio-label {
+        flex: 0 1 auto;
+        min-width: 100px;
     }
 
     .practice-container {
