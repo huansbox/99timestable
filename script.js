@@ -619,8 +619,8 @@ class MultiplicationApp {
         // 獲取設定
         const questionCountRadio = document.querySelector('input[name="question-count"]:checked');
         const questionCountValue = questionCountRadio.value;
-        const inputMethodRadio = document.querySelector('input[name="input-method"]:checked');
-        this.inputMethod = inputMethodRadio ? inputMethodRadio.value : 'keyboard';
+        const showVirtualKeyboard = document.getElementById('show-virtual-keyboard').checked;
+        this.inputMethod = showVirtualKeyboard ? 'both' : 'voice';
 
         // 判斷是否為練習模式
         this.practiceMode = (questionCountValue === 'practice');
