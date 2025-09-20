@@ -662,14 +662,18 @@ body {
 /* 答案輸入區 */
 .answer-container {
     display: flex;
-    gap: var(--spacing-s);
+    gap: var(--spacing-xs);
     align-items: center;
+    justify-content: center;
     width: 100%;
-    max-width: 300px;
+    max-width: 100%;
+    padding: 0 var(--spacing-s);
 }
 
 .answer-input {
     flex: 1;
+    min-width: 0;
+    max-width: 150px;
     font-size: var(--font-size-input);
     padding: var(--spacing-s);
     border: 3px solid var(--border-color);
@@ -692,8 +696,9 @@ body {
 }
 
 .submit-btn {
+    flex-shrink: 0;
     font-size: var(--font-size-button);
-    padding: var(--spacing-s);
+    padding: var(--spacing-s) var(--spacing-m);
     background: var(--primary-color);
     color: white;
     border: none;
@@ -729,15 +734,15 @@ body {
 
 /* === 語音輸入按鈕樣式 === */
 .mic-input-btn {
-    width: var(--touch-target-large);
-    height: var(--touch-target-large);
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
     border: none;
     border-radius: 50%;
     background: var(--primary-color);
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    margin-left: var(--spacing-sm);
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     transition: all 0.3s ease;
 }
