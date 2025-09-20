@@ -780,6 +780,12 @@ class MultiplicationApp {
     processVoiceInput(transcript) {
         console.log('處理語音輸入:', transcript);
 
+        if (!transcript || transcript.trim() === '') {
+            // 沒有接收到語音
+            this.showIncorrectFeedback('voice', undefined);
+            return;
+        }
+
         // 轉換為數字
         const number = this.convertTextToNumber(transcript.trim());
         console.log('轉換結果:', number);
@@ -789,8 +795,11 @@ class MultiplicationApp {
             const answerInput = document.getElementById('answer-input');
             answerInput.value = number;
 
-            // 自動檢查答案
-            this.checkAnswer();
+            // 自動檢查答案，傳遞語音來源和辨識的數字
+            this.checkAnswer('voice', number);
+        } else {
+            // 無法轉換為數字
+            this.showIncorrectFeedback('voice', false);
         }
     }
 
@@ -1075,7 +1084,7 @@ class MultiplicationApp {
         this.resetFeedback();
     }
 
-    checkAnswer() {
+    checkAnswer(source = 'keyboard', voiceNumber = null) {
         // 防止重複處理答案
         if (this.isProcessingAnswer) {
             return;
@@ -1102,7 +1111,7 @@ class MultiplicationApp {
                 this.isProcessingAnswer = false; // 完成後重置標誌
             }, 1200);
         } else {
-            this.showIncorrectFeedback();
+            this.showIncorrectFeedback(source, voiceNumber);
             answerInput.value = ''; // 清空錯誤答案
             this.isProcessingAnswer = false; // 錯誤答案立即重置標誌
         }
@@ -1114,11 +1123,27 @@ class MultiplicationApp {
         feedbackEl.className = 'feedback correct';
     }
 
-    showIncorrectFeedback() {
+    showIncorrectFeedback(source = 'keyboard', voiceNumber = null) {
         const feedbackEl = document.getElementById('feedback');
-        feedbackEl.textContent = '再試一次！';
+
+        if (source === 'voice') {
+            if (voiceNumber !== null) {
+                // 語音辨識成功但答錯
+                feedbackEl.textContent = `${voiceNumber}，再試一次！`;
+            } else if (voiceNumber === false) {
+                // 語音辨識到非數字
+                feedbackEl.textContent = '無法轉為數字，再試一次！';
+            } else {
+                // 沒有接收到語音
+                feedbackEl.textContent = '沒有語音，再試一次！';
+            }
+        } else {
+            // 鍵盤輸入維持原樣
+            feedbackEl.textContent = '再試一次！';
+        }
+
         feedbackEl.className = 'feedback incorrect';
-        
+
         // 1秒後清除錯誤提示
         setTimeout(() => {
             this.resetFeedback();
