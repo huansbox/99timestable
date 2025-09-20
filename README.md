@@ -128,6 +128,7 @@
 ```
 99times/
 ├── index.html              # 主頁面
+├── single-digit-test.html  # 語音識別測試工具
 ├── styles-rwd.css          # RWD 響應式樣式
 ├── script.js               # 互動邏輯
 ├── styles-original.css     # 原始樣式備份
