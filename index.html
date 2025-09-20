@@ -48,7 +48,7 @@
                             顯示計時器
                         </label>
                     </div>
-                    
+
                     <div class="setting-item">
                         <label class="setting-label">題目數量：</label>
                         <div class="radio-group">
@@ -66,6 +66,27 @@
                                 <input type="radio" name="question-count" value="practice" class="setting-radio">
                                 <span class="radio-mark"></span>
                                 練習模式
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <label class="setting-label">回答方式：</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="input-method" value="keyboard" class="setting-radio" checked>
+                                <span class="radio-mark"></span>
+                                虛擬鍵盤
+                            </label>
+                            <label class="radio-label" style="margin-left: 2rem;">
+                                <input type="radio" name="input-method" value="voice" class="setting-radio">
+                                <span class="radio-mark"></span>
+                                🎤 語音輸入
+                            </label>
+                            <label class="radio-label" style="margin-left: 2rem;">
+                                <input type="radio" name="input-method" value="both" class="setting-radio">
+                                <span class="radio-mark"></span>
+                                兩者皆可
                             </label>
                         </div>
                     </div>
@@ -172,14 +193,17 @@
                 
                 <!-- 答案輸入區 -->
                 <div class="answer-container">
-                    <input 
-                        type="text" 
-                        id="answer-input" 
-                        class="answer-input" 
+                    <input
+                        type="text"
+                        id="answer-input"
+                        class="answer-input"
                         placeholder="輸入答案"
                         readonly
                         autocomplete="off"
                     >
+                    <button id="mic-input-btn" class="mic-input-btn" title="語音輸入" style="display: none;">
+                        🎤
+                    </button>
                     <button id="submit-btn" class="submit-btn">確認</button>
                 </div>
                 

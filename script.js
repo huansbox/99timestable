@@ -619,6 +619,8 @@ class MultiplicationApp {
         // 獲取設定
         const questionCountRadio = document.querySelector('input[name="question-count"]:checked');
         const questionCountValue = questionCountRadio.value;
+        const inputMethodRadio = document.querySelector('input[name="input-method"]:checked');
+        this.inputMethod = inputMethodRadio ? inputMethodRadio.value : 'keyboard';
 
         // 判斷是否為練習模式
         this.practiceMode = (questionCountValue === 'practice');
@@ -677,8 +679,209 @@ class MultiplicationApp {
         if (this.showTimer) {
             this.startTimer();
         }
+        this.setupInputMethod(); // 設定輸入方式
         this.showQuestion();
         this.setupEventListeners();
+    }
+
+    setupInputMethod() {
+        const numberPad = document.getElementById('number-pad');
+        const micButton = document.getElementById('mic-input-btn');
+        const practiceContainer = document.getElementById('practice-screen');
+
+        // 移除之前的模式類別
+        practiceContainer.classList.remove('input-mode-keyboard', 'input-mode-voice', 'input-mode-both');
+
+        if (this.inputMethod === 'keyboard') {
+            // 只顯示虛擬鍵盤
+            numberPad.style.display = 'flex';
+            micButton.style.display = 'none';
+            practiceContainer.classList.add('input-mode-keyboard');
+        } else if (this.inputMethod === 'voice') {
+            // 只顯示語音輸入
+            numberPad.style.display = 'none';
+            micButton.style.display = 'inline-block';
+            practiceContainer.classList.add('input-mode-voice');
+            this.setupVoiceRecognition(); // 初始化語音識別
+        } else if (this.inputMethod === 'both') {
+            // 兩者都顯示
+            numberPad.style.display = 'flex';
+            micButton.style.display = 'inline-block';
+            practiceContainer.classList.add('input-mode-both');
+            this.setupVoiceRecognition(); // 初始化語音識別
+        }
+    }
+
+    setupVoiceRecognition() {
+        // 檢查瀏覽器支援
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            console.warn('瀏覽器不支援語音識別');
+            // 如果不支援，改回鍵盤模式
+            this.inputMethod = 'keyboard';
+            this.setupInputMethod();
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+
+        // 設定語音識別參數
+        this.recognition.lang = 'zh-TW';
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.maxAlternatives = 3;
+
+        // 語音識別狀態
+        this.isListening = false;
+
+        // 事件處理
+        this.recognition.onstart = () => {
+            console.log('語音識別開始');
+            this.isListening = true;
+            this.updateMicButton();
+        };
+
+        this.recognition.onresult = (event) => {
+            console.log('語音識別結果:', event);
+
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            for (let i = 0; i < event.results.length; i++) {
+                const result = event.results[i];
+                const transcript = result[0].transcript;
+
+                if (result.isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            // 處理最終結果
+            if (finalTranscript) {
+                console.log('最終結果:', finalTranscript);
+                setTimeout(() => {
+                    this.processVoiceInput(finalTranscript);
+                }, 100);
+            }
+        };
+
+        this.recognition.onerror = (event) => {
+            console.error('語音識別錯誤:', event.error);
+            this.isListening = false;
+            this.updateMicButton();
+        };
+
+        this.recognition.onend = () => {
+            console.log('語音識別結束');
+            this.isListening = false;
+            this.updateMicButton();
+        };
+    }
+
+    processVoiceInput(transcript) {
+        console.log('處理語音輸入:', transcript);
+
+        // 轉換為數字
+        const number = this.convertTextToNumber(transcript.trim());
+        console.log('轉換結果:', number);
+
+        if (number !== null) {
+            // 填入答案輸入框
+            const answerInput = document.getElementById('answer-input');
+            answerInput.value = number;
+
+            // 自動檢查答案
+            this.checkAnswer();
+        }
+    }
+
+    convertTextToNumber(text) {
+        // 移除空白和標點符號
+        text = text.replace(/[，。！？\s這是]/g, '');
+
+        // 直接是阿拉伯數字
+        if (/^\d+$/.test(text)) {
+            const num = parseInt(text);
+            return num >= 0 && num <= 99 ? num : null;
+        }
+
+        // 中文數字對照表
+        const chineseDigits = {
+            '零': 0, '〇': 0,
+            '一': 1, '壹': 1,
+            '二': 2, '貳': 2, '兩': 2,
+            '三': 3, '參': 3,
+            '四': 4, '肆': 4,
+            '五': 5, '伍': 5,
+            '六': 6, '陸': 6,
+            '七': 7, '柒': 7,
+            '八': 8, '捌': 8,
+            '九': 9, '玖': 9
+        };
+
+        // 處理特殊情況
+        if (text === '十') return 10;
+
+        // 處理 X十Y 格式（如：二十四）
+        const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);
+        if (tenMatch) {
+            const tens = tenMatch[1] ? chineseDigits[tenMatch[1]] : 1;
+            const ones = tenMatch[2] ? chineseDigits[tenMatch[2]] : 0;
+            return tens * 10 + ones;
+        }
+
+        // 處理連續數字（如：四二 → 42、三六 → 36）
+        if (text.length === 2) {
+            const digit1 = chineseDigits[text[0]];
+            const digit2 = chineseDigits[text[1]];
+            if (digit1 !== undefined && digit2 !== undefined) {
+                const result = digit1 * 10 + digit2;
+                if (result >= 10 && result <= 99) {
+                    console.log(`連續數字轉換: "${text}" → ${result}`);
+                    return result;
+                }
+            }
+        }
+
+        // 處理純個位數
+        if (text.length === 1 && chineseDigits.hasOwnProperty(text)) {
+            return chineseDigits[text];
+        }
+
+        return null;
+    }
+
+    startListening() {
+        if (!this.recognition || this.isListening) return;
+
+        try {
+            console.log('啟動語音識別...');
+            this.recognition.start();
+        } catch (error) {
+            console.error('啟動語音識別失敗:', error);
+        }
+    }
+
+    stopListening() {
+        if (this.recognition && this.isListening) {
+            console.log('停止語音識別');
+            this.recognition.stop();
+        }
+    }
+
+    updateMicButton() {
+        const micButton = document.getElementById('mic-input-btn');
+        if (!micButton) return;
+
+        if (this.isListening) {
+            micButton.textContent = '🔴';
+            micButton.classList.add('listening');
+        } else {
+            micButton.textContent = '🎤';
+            micButton.classList.remove('listening');
+        }
     }
 
     startTimer() {
@@ -720,9 +923,21 @@ class MultiplicationApp {
 
         // 提交答案
         submitBtn.addEventListener('click', () => this.checkAnswer());
-        
+
         // 退出按鈕
         exitBtn.addEventListener('click', () => this.handleExit());
+
+        // 麥克風按鈕事件
+        const micButton = document.getElementById('mic-input-btn');
+        if (micButton) {
+            micButton.addEventListener('click', () => {
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            });
+        }
         
         // Enter鍵提交
         answerInput.addEventListener('keypress', (e) => {
