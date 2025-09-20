@@ -810,14 +810,14 @@ class MultiplicationApp {
             // 自動檢查答案，傳遞語音來源和辨識的數字
             this.checkAnswer('voice', number);
         } else {
-            // 無法轉換為數字
-            this.showIncorrectFeedback('voice', false);
+            // 無法轉換為數字 - 傳遞原始識別文字
+            this.showIncorrectFeedback('voice', false, transcript.trim());
         }
     }
 
     convertTextToNumber(text) {
         // 移除空白和標點符號
-        text = text.replace(/[，。！？\s這是]/g, '');
+        text = text.replace(/[，。！？\s這]/g, '');
 
         // 直接是阿拉伯數字
         if (/^\d+$/.test(text)) {
@@ -1175,7 +1175,7 @@ class MultiplicationApp {
         feedbackEl.className = 'feedback correct';
     }
 
-    showIncorrectFeedback(source = 'keyboard', voiceNumber = null) {
+    showIncorrectFeedback(source = 'keyboard', voiceNumber = null, originalText = null) {
         const feedbackEl = document.getElementById('feedback');
 
         if (source === 'voice') {
@@ -1183,8 +1183,8 @@ class MultiplicationApp {
                 // 語音辨識成功但答錯
                 feedbackEl.textContent = `${voiceNumber}，再試一次！`;
             } else if (voiceNumber === false) {
-                // 語音辨識到非數字
-                feedbackEl.textContent = '無法轉為數字，再試一次！';
+                // 語音辨識到非數字 - 顯示實際識別到的文字
+                feedbackEl.textContent = `識別到：${originalText}，再試一次！`;
             } else {
                 // 沒有接收到語音
                 feedbackEl.textContent = '沒有語音，再試一次！';
