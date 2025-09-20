@@ -347,6 +347,9 @@ class MultiplicationApp {
             this.backToStart();
         });
 
+        // 練習模式子選單邏輯
+        this.setupPracticeModeOptions();
+
         // 切換選項卡事件處理
         this.setupLeaderboardTabs();
     }
@@ -367,6 +370,36 @@ class MultiplicationApp {
                 e.preventDefault();
                 const questionCount = parseInt(tab.dataset.questions);
                 this.switchLeaderboard(questionCount);
+            });
+        });
+    }
+
+    // 設定練習模式選項邏輯
+    setupPracticeModeOptions() {
+        const questionCountRadios = document.querySelectorAll('input[name="question-count"]');
+        const practiceTypeRadios = document.querySelectorAll('input[name="practice-type"]');
+        const practiceOptions = document.getElementById('practice-mode-options');
+        const numberSelection = document.getElementById('number-selection');
+
+        // 監聽題目數量選擇變化
+        questionCountRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'practice') {
+                    practiceOptions.style.display = 'block';
+                } else {
+                    practiceOptions.style.display = 'none';
+                }
+            });
+        });
+
+        // 監聽練習類型選擇變化
+        practiceTypeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'multiplicand' || radio.value === 'multiplier') {
+                    numberSelection.style.display = 'block';
+                } else {
+                    numberSelection.style.display = 'none';
+                }
             });
         });
     }
@@ -535,20 +568,48 @@ class MultiplicationApp {
     }
 
     // 練習模式：按九九乘法表順序生成題目
-    generatePracticeQuestions() {
+    generatePracticeQuestions(practiceType = 'all', selectedNumbers = []) {
         const practiceQuestions = [];
 
-        // 生成 2×1 到 9×9 的順序題目（只生成結果類型題目）
-        for (let num1 = 2; num1 <= 9; num1++) {
-            for (let num2 = 1; num2 <= 9; num2++) {
-                practiceQuestions.push({
-                    id: practiceQuestions.length + 1,
-                    num1: num1,
-                    num2: num2,
-                    answer: num1 * num2,
-                    type: 'result'
-                });
+        if (practiceType === 'all') {
+            // 生成 2×1 到 9×9 的順序題目（只生成結果類型題目）
+            for (let num1 = 2; num1 <= 9; num1++) {
+                for (let num2 = 1; num2 <= 9; num2++) {
+                    practiceQuestions.push({
+                        id: practiceQuestions.length + 1,
+                        num1: num1,
+                        num2: num2,
+                        answer: num1 * num2,
+                        type: 'result'
+                    });
+                }
             }
+        } else if (practiceType === 'multiplicand') {
+            // 選擇特定被乘數（第一個數字）
+            selectedNumbers.forEach(num1 => {
+                for (let num2 = 1; num2 <= 9; num2++) {
+                    practiceQuestions.push({
+                        id: practiceQuestions.length + 1,
+                        num1: parseInt(num1),
+                        num2: num2,
+                        answer: parseInt(num1) * num2,
+                        type: 'result'
+                    });
+                }
+            });
+        } else if (practiceType === 'multiplier') {
+            // 選擇特定乘數（第二個數字）
+            selectedNumbers.forEach(num2 => {
+                for (let num1 = 2; num1 <= 9; num1++) {
+                    practiceQuestions.push({
+                        id: practiceQuestions.length + 1,
+                        num1: num1,
+                        num2: parseInt(num2),
+                        answer: num1 * parseInt(num2),
+                        type: 'result'
+                    });
+                }
+            });
         }
 
         return practiceQuestions;
@@ -565,8 +626,32 @@ class MultiplicationApp {
         if (this.practiceMode) {
             // 練習模式：不計時，不記錄排行榜
             this.showTimer = false;
-            this.questionCount = 72; // 2×1 到 9×9 共 72 題
-            this.currentQuestions = this.generatePracticeQuestions();
+
+            // 獲取練習類型和選擇的數字
+            const practiceTypeRadio = document.querySelector('input[name="practice-type"]:checked');
+            const practiceType = practiceTypeRadio ? practiceTypeRadio.value : 'all';
+
+            let selectedNumbers = [];
+            if (practiceType !== 'all') {
+                const checkedBoxes = document.querySelectorAll('.number-checkbox:checked');
+                selectedNumbers = Array.from(checkedBoxes).map(cb => cb.value);
+
+                // 如果沒有選擇任何數字，提示用戶
+                if (selectedNumbers.length === 0) {
+                    alert('請至少選擇一個數字');
+                    return;
+                }
+            }
+
+            // 生成題目並設定數量
+            this.currentQuestions = this.generatePracticeQuestions(practiceType, selectedNumbers);
+            this.questionCount = this.currentQuestions.length;
+
+            // 儲存練習資訊供完成頁面使用
+            this.practiceInfo = {
+                type: practiceType,
+                selectedNumbers: selectedNumbers
+            };
         } else {
             // 一般模式：按原有邏輯
             this.showTimer = document.getElementById('show-timer').checked;
@@ -921,13 +1006,33 @@ class MultiplicationApp {
     // 練習模式完成頁面
     showPracticeCompletion() {
         const appEl = document.getElementById('app');
+        let completionMessage = '';
+        let detailMessage = '';
+
+        // 根據練習類型生成不同的完成訊息
+        if (this.practiceInfo && this.practiceInfo.type !== 'all') {
+            const numbers = this.practiceInfo.selectedNumbers.join('、');
+            const totalQuestions = this.currentQuestions.length;
+
+            if (this.practiceInfo.type === 'multiplicand') {
+                completionMessage = `🌟 恭喜完成 ${numbers} 的乘法表練習！`;
+                detailMessage = `共完成 ${totalQuestions} 道題目，你已經熟練掌握了 ${numbers} 的乘法！`;
+            } else if (this.practiceInfo.type === 'multiplier') {
+                completionMessage = `🌟 恭喜完成乘以 ${numbers} 的練習！`;
+                detailMessage = `共完成 ${totalQuestions} 道題目，你已經熟練掌握了乘以 ${numbers} 的計算！`;
+            }
+        } else {
+            completionMessage = `🌟 恭喜完成 ${this.questionCount} 道九九乘法表練習！`;
+            detailMessage = '從 2×1 到 9×9，你已經熟練掌握了所有基礎乘法！';
+        }
+
         appEl.innerHTML = `
             <div class="completion">
                 <h1>🎉 練習完成！</h1>
                 <div class="completion-stats">
-                    <p>🌟 恭喜完成 72 道九九乘法表練習！</p>
+                    <p>${completionMessage}</p>
                     <p style="color: var(--text-secondary); margin-top: var(--spacing-m);">
-                        從 2×1 到 9×9，你已經熟練掌握了所有基礎乘法！
+                        ${detailMessage}
                     </p>
                 </div>
                 <div style="display: flex; gap: var(--spacing-m); flex-wrap: wrap; justify-content: center; margin-top: var(--spacing-xl);">

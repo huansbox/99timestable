@@ -69,8 +69,69 @@
                             </label>
                         </div>
                     </div>
+
+                    <!-- 練習模式子選單 -->
+                    <div id="practice-mode-options" class="practice-mode-options" style="display: none;">
+                        <label class="setting-label">練習範圍：</label>
+                        <div class="practice-type-group">
+                            <label class="radio-label">
+                                <input type="radio" name="practice-type" value="all" class="setting-radio" checked>
+                                <span class="radio-mark"></span>
+                                練習全部 (2×1 到 9×9)
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="practice-type" value="multiplicand" class="setting-radio">
+                                <span class="radio-mark"></span>
+                                選擇被乘數 (如：2×n, 5×n)
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="practice-type" value="multiplier" class="setting-radio">
+                                <span class="radio-mark"></span>
+                                選擇乘數 (如：n×5, n×7)
+                            </label>
+                        </div>
+
+                        <!-- 數字選擇區域 -->
+                        <div id="number-selection" class="number-selection" style="display: none;">
+                            <label class="setting-label">選擇數字：</label>
+                            <div class="number-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="2" class="number-checkbox">
+                                    <span class="checkbox-mark">2</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="3" class="number-checkbox">
+                                    <span class="checkbox-mark">3</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="4" class="number-checkbox">
+                                    <span class="checkbox-mark">4</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="5" class="number-checkbox">
+                                    <span class="checkbox-mark">5</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="6" class="number-checkbox">
+                                    <span class="checkbox-mark">6</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="7" class="number-checkbox">
+                                    <span class="checkbox-mark">7</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="8" class="number-checkbox">
+                                    <span class="checkbox-mark">8</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="9" class="number-checkbox">
+                                    <span class="checkbox-mark">9</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <button id="start-practice" class="start-btn">開始練習</button>
                 <button id="view-records" class="view-records-btn">查看記錄</button>
             </div>
