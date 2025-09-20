@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>語音輸入測試 v2 - 改良版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status.supported {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.unsupported {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .question-area {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .question {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .answer-area {
+            font-size: 20px;
+            color: #666;
+            min-height: 30px;
+        }
+
+        .mic-button {
+            width: 100px;
+            height: 100px;
+            border: none;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .mic-button:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .mic-button.listening {
+            background: #e53e3e;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(229, 62, 62, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+            }
+        }
+
+        .instructions {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .transcript-area {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .transcript-label {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .transcript-text {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .result-area {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        .result-correct {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .result-incorrect {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .next-button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px;
+            display: none;
+        }
+
+        .next-button:hover {
+            background: #38a169;
+        }
+
+        .debug-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .stats {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 語音輸入測試 v2</h1>
+
+        <div id="status" class="status">
+            檢測瀏覽器支援狀態...
+        </div>
+
+        <div class="question-area">
+            <div class="question" id="question">
+                點擊麥克風開始測試
+            </div>
+            <div class="answer-area" id="answer">
+                答案將顯示在這裡
+            </div>
+        </div>
+
+        <div class="instructions">
+            點擊麥克風按鈕，說出答案
+        </div>
+
+        <button id="mic-button" class="mic-button">
+            🎤
+        </button>
+
+        <div class="result-area" id="result">
+            等待測試...
+        </div>
+
+        <button id="next-button" class="next-button">
+            下一題
+        </button>
+
+        <div id="transcript-area" class="transcript-area">
+            <div class="transcript-label">語音識別結果：</div>
+            <div class="transcript-text" id="transcript-text">-</div>
+        </div>
+
+        <div id="error-message" class="error-message">
+            錯誤訊息
+        </div>
+
+        <div class="stats">
+            <div>測試進度：<span id="progress">0/10</span></div>
+            <div>成功率：<span id="success-rate">0%</span></div>
+        </div>
+
+        <div class="debug-area">
+            <strong>除錯資訊：</strong><br>
+            <div id="debug-log">等待開始測試...</div>
+        </div>
+    </div>
+
+    <script>
+        class VoiceTestV2 {
+            constructor() {
+                this.recognition = null;
+                this.isSupported = false;
+                this.isListening = false;
+
+                this.questions = [
+                    { num1: 2, num2: 3, answer: 6 },
+                    { num1: 4, num2: 5, answer: 20 },
+                    { num1: 3, num2: 8, answer: 24 },
+                    { num1: 6, num2: 7, answer: 42 },
+                    { num1: 9, num2: 4, answer: 36 },
+                    { num1: 5, num2: 6, answer: 30 },
+                    { num1: 7, num2: 8, answer: 56 },
+                    { num1: 2, num2: 9, answer: 18 },
+                    { num1: 8, num2: 3, answer: 24 },
+                    { num1: 9, num2: 9, answer: 81 }
+                ];
+
+                this.currentQuestion = 0;
+                this.results = [];
+                this.debugMessages = [];
+
+                this.init();
+            }
+
+            init() {
+                this.checkSupport();
+                this.setupEventListeners();
+                this.loadQuestion();
+            }
+
+            checkSupport() {
+                const statusEl = document.getElementById('status');
+
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    this.isSupported = true;
+                    statusEl.textContent = '✅ 瀏覽器支援語音識別 - 可以開始測試';
+                    statusEl.className = 'status supported';
+                    this.setupSpeechRecognition();
+                } else {
+                    this.isSupported = false;
+                    statusEl.textContent = '❌ 瀏覽器不支援語音識別 - 請使用 Chrome 或 Edge';
+                    statusEl.className = 'status unsupported';
+                    document.getElementById('mic-button').disabled = true;
+                }
+            }
+
+            setupSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+
+                this.recognition.lang = 'zh-TW';
+                this.recognition.continuous = false;
+                this.recognition.interimResults = true;
+                this.recognition.maxAlternatives = 3;
+
+                this.recognition.onstart = () => {
+                    this.log('✅ 語音識別開始');
+                    this.isListening = true;
+                    this.updateMicButton();
+                    this.startTime = Date.now();
+                };
+
+                this.recognition.onresult = (event) => {
+                    this.log(`📝 收到識別結果，共 ${event.results.length} 個結果`);
+
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+
+                    for (let i = 0; i < event.results.length; i++) {
+                        const result = event.results[i];
+                        const transcript = result[0].transcript;
+
+                        this.log(`   結果 ${i}: "${transcript}" (最終: ${result.isFinal})`);
+
+                        if (result.isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+
+                    // 顯示中間結果
+                    if (interimTranscript) {
+                        document.getElementById('transcript-text').textContent = `(識別中) ${interimTranscript}`;
+                        document.getElementById('transcript-area').style.display = 'block';
+                    }
+
+                    // 處理最終結果
+                    if (finalTranscript) {
+                        this.log(`🎯 最終結果: "${finalTranscript}"`);
+                        this.processVoiceInput(finalTranscript);
+                    }
+                };
+
+                this.recognition.onerror = (event) => {
+                    this.log(`❌ 語音識別錯誤: ${event.error}`);
+                    this.showError(`語音識別錯誤: ${event.error}`);
+                    this.isListening = false;
+                    this.updateMicButton();
+                };
+
+                this.recognition.onend = () => {
+                    this.log('⏹️ 語音識別結束');
+                    this.isListening = false;
+                    this.updateMicButton();
+                };
+            }
+
+            setupEventListeners() {
+                const micButton = document.getElementById('mic-button');
+                const nextButton = document.getElementById('next-button');
+
+                micButton.addEventListener('click', () => {
+                    if (!this.isSupported) return;
+
+                    if (this.isListening) {
+                        this.stopListening();
+                    } else {
+                        this.startListening();
+                    }
+                });
+
+                nextButton.addEventListener('click', () => {
+                    this.nextQuestion();
+                });
+            }
+
+            startListening() {
+                if (!this.recognition || this.isListening) return;
+
+                try {
+                    this.log('🎤 啟動語音識別...');
+                    this.recognition.start();
+                    this.hideError();
+                    document.getElementById('transcript-area').style.display = 'none';
+                } catch (error) {
+                    this.log(`❌ 啟動失敗: ${error.message}`);
+                    this.showError(`啟動語音識別失敗: ${error.message}`);
+                }
+            }
+
+            stopListening() {
+                if (this.recognition && this.isListening) {
+                    this.log('⏹️ 手動停止語音識別');
+                    this.recognition.stop();
+                }
+            }
+
+            updateMicButton() {
+                const button = document.getElementById('mic-button');
+                if (this.isListening) {
+                    button.textContent = '🔴';
+                    button.classList.add('listening');
+                } else {
+                    button.textContent = '🎤';
+                    button.classList.remove('listening');
+                }
+            }
+
+            processVoiceInput(transcript) {
+                this.log(`🔄 處理語音輸入: "${transcript}"`);
+
+                // 顯示識別結果
+                document.getElementById('transcript-text').textContent = transcript;
+                document.getElementById('transcript-area').style.display = 'block';
+
+                // 轉換為數字
+                const number = this.convertToNumber(transcript.trim());
+                this.log(`🔢 轉換結果: ${number}`);
+
+                if (number !== null) {
+                    this.checkAnswer(number, transcript);
+                } else {
+                    document.getElementById('answer').textContent = '無法識別為數字';
+                    document.getElementById('result').innerHTML = '<span class="result-incorrect">❌ 無法識別為數字，請重試</span>';
+                }
+            }
+
+            convertToNumber(text) {
+                this.log(`🔤 轉換文字: "${text}"`);
+
+                // 移除空白和標點符號
+                text = text.replace(/[，。！？\s]/g, '');
+
+                // 直接是阿拉伯數字
+                if (/^\d+$/.test(text)) {
+                    const num = parseInt(text);
+                    return num >= 0 && num <= 99 ? num : null;
+                }
+
+                // 中文數字對照表
+                const chineseDigits = {
+                    '零': 0, '〇': 0,
+                    '一': 1, '壹': 1,
+                    '二': 2, '貳': 2, '兩': 2,
+                    '三': 3, '參': 3,
+                    '四': 4, '肆': 4,
+                    '五': 5, '伍': 5,
+                    '六': 6, '陸': 6,
+                    '七': 7, '柒': 7,
+                    '八': 8, '捌': 8,
+                    '九': 9, '玖': 9
+                };
+
+                // 處理特殊情況
+                if (text === '十') return 10;
+
+                // 處理 X十Y 格式
+                const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);
+                if (tenMatch) {
+                    const tens = tenMatch[1] ? chineseDigits[tenMatch[1]] : 1;
+                    const ones = tenMatch[2] ? chineseDigits[tenMatch[2]] : 0;
+                    return tens * 10 + ones;
+                }
+
+                // 處理純個位數
+                if (text.length === 1 && chineseDigits.hasOwnProperty(text)) {
+                    return chineseDigits[text];
+                }
+
+                return null;
+            }
+
+            checkAnswer(userAnswer, transcript) {
+                const expectedAnswer = this.questions[this.currentQuestion].answer;
+                const correct = userAnswer === expectedAnswer;
+                const responseTime = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;
+
+                this.log(`✅ 檢查答案: ${userAnswer} vs ${expectedAnswer} = ${correct ? '正確' : '錯誤'}`);
+
+                // 記錄結果
+                this.results.push({
+                    question: this.getCurrentQuestionText(),
+                    expected: expectedAnswer,
+                    transcript: transcript,
+                    recognized: userAnswer,
+                    correct: correct,
+                    responseTime: responseTime
+                });
+
+                // 顯示結果
+                document.getElementById('answer').textContent = `你的答案: ${userAnswer}`;
+
+                if (correct) {
+                    document.getElementById('result').innerHTML = '<span class="result-correct">✅ 正確！</span>';
+                } else {
+                    document.getElementById('result').innerHTML = `<span class="result-incorrect">❌ 錯誤！正確答案是 ${expectedAnswer}</span>`;
+                }
+
+                this.updateStats();
+                document.getElementById('next-button').style.display = 'block';
+            }
+
+            getCurrentQuestionText() {
+                const q = this.questions[this.currentQuestion];
+                return `${q.num1} × ${q.num2}`;
+            }
+
+            loadQuestion() {
+                if (this.currentQuestion < this.questions.length) {
+                    const question = this.questions[this.currentQuestion];
+                    document.getElementById('question').textContent = `${question.num1} × ${question.num2} = ?`;
+                    document.getElementById('answer').textContent = '等待語音輸入...';
+                    document.getElementById('result').textContent = '點擊麥克風說出答案';
+                    document.getElementById('next-button').style.display = 'none';
+                    document.getElementById('transcript-area').style.display = 'none';
+                } else {
+                    this.showFinalResults();
+                }
+            }
+
+            nextQuestion() {
+                this.currentQuestion++;
+                this.loadQuestion();
+            }
+
+            updateStats() {
+                const correctCount = this.results.filter(r => r.correct).length;
+                const successRate = this.results.length > 0 ? Math.round(correctCount / this.results.length * 100) : 0;
+
+                document.getElementById('progress').textContent = `${this.results.length}/${this.questions.length}`;
+                document.getElementById('success-rate').textContent = `${successRate}%`;
+            }
+
+            showFinalResults() {
+                document.getElementById('question').textContent = '測試完成！';
+                document.getElementById('answer').textContent = `總共完成 ${this.results.length} 題`;
+                document.getElementById('mic-button').style.display = 'none';
+                document.getElementById('next-button').style.display = 'none';
+
+                const correctCount = this.results.filter(r => r.correct).length;
+                const avgTime = this.results.reduce((sum, r) => sum + r.responseTime, 0) / this.results.length;
+
+                this.log(`🎊 測試完成！正確率: ${correctCount}/${this.results.length} (${Math.round(correctCount/this.results.length*100)}%)`);
+                this.log(`⏱️ 平均反應時間: ${avgTime.toFixed(2)}秒`);
+            }
+
+            showError(message) {
+                const errorEl = document.getElementById('error-message');
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+            }
+
+            hideError() {
+                document.getElementById('error-message').style.display = 'none';
+            }
+
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+
+                this.debugMessages.push(logMessage);
+                if (this.debugMessages.length > 20) {
+                    this.debugMessages.shift();
+                }
+
+                document.getElementById('debug-log').innerHTML =
+                    this.debugMessages.join('<br>');
+            }
+        }
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            new VoiceTestV2();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>語音輸入測試 - 九九乘法表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .status {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status.supported {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.unsupported {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .question-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .answer-display {
+            font-size: 24px;
+            color: #666;
+            min-height: 40px;
+        }
+
+        .mic-button {
+            display: block;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: #667eea;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .mic-button:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .mic-button:active {
+            transform: scale(0.95);
+        }
+
+        .mic-button.listening {
+            background: #e53e3e;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(229, 62, 62, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+            }
+        }
+
+        .instructions {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-correct {
+            color: #28a745;
+        }
+
+        .result-incorrect {
+            color: #dc3545;
+        }
+
+        .stats {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .stats h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .next-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .next-button:hover {
+            background: #38a169;
+        }
+
+        .transcript-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #ffc107;
+        }
+
+        .transcript-label {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .transcript-text {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 語音輸入測試</h1>
+
+        <div id="status" class="status">
+            檢測瀏覽器支援狀態...
+        </div>
+
+        <div class="question-box">
+            <div class="question" id="question">
+                點擊下方按鈕開始測試
+            </div>
+            <div class="answer-display" id="answer-display">
+                答案將顯示在這裡
+            </div>
+        </div>
+
+        <div class="instructions">
+            點擊麥克風按鈕，說出答案（3秒自動結束）
+        </div>
+
+        <button id="mic-button" class="mic-button">
+            🎤
+        </button>
+
+        <button id="next-button" class="next-button" style="display: none;">
+            下一題
+        </button>
+
+        <div id="transcript-box" class="transcript-box" style="display: none;">
+            <div class="transcript-label">識別結果：</div>
+            <div class="transcript-text" id="transcript-text">-</div>
+        </div>
+
+        <div id="error-message" class="error-message">
+            錯誤訊息
+        </div>
+
+        <div class="results">
+            <h3>測試記錄</h3>
+            <div id="results-list">
+                尚未開始測試
+            </div>
+        </div>
+
+        <div class="stats">
+            <h3>統計數據</h3>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="success-rate">0%</div>
+                    <div class="stat-label">成功率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-tests">0</div>
+                    <div class="stat-label">測試次數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avg-time">0s</div>
+                    <div class="stat-label">平均反應時間</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracy">0%</div>
+                    <div class="stat-label">識別準確率</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="voice-test.js"></script>
+</body>
+</html>
