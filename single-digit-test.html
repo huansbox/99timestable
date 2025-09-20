@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>單音節數字語音測試</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .current-test {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .test-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+
+        .chinese-number {
+            font-size: 2rem;
+            color: #374151;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            min-height: 1.5rem;
+        }
+
+        .listening {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .result-correct {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .result-wrong {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .result-no-input {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3730a3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .test-item {
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .test-item.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .test-item.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .test-item.pending {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            background: #059669;
+            color: white;
+        }
+
+        .restart-btn:hover {
+            background: #047857;
+        }
+
+        @media (max-width: 480px) {
+            .test-container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .test-number {
+                font-size: 2.5rem;
+            }
+
+            .chinese-number {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="title">單音節數字語音測試</h1>
+        <p class="subtitle">測試中文數字「二、三、四、五、六、七、八、九、十」語音識別</p>
+
+        <div class="current-test">
+            <div class="test-number" id="test-number">2</div>
+            <div class="chinese-number" id="chinese-number">二</div>
+            <div class="status" id="status">點擊開始測試</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="start-btn" onclick="startTest()">開始測試</button>
+            <button class="btn btn-secondary" id="next-btn" onclick="nextNumber()" disabled>下一個</button>
+        </div>
+
+        <div class="results-summary">
+            <div class="progress">
+                <span>進度：<span id="current-index">0</span> / 9</span>
+                <span>正確率：<span id="accuracy">0%</span></span>
+            </div>
+
+            <div class="test-grid" id="test-grid">
+                <!-- 測試結果會動態生成 -->
+            </div>
+
+            <div class="summary-stats" id="summary-stats" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-number" id="correct-count">0</div>
+                    <div class="stat-label">正確</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="wrong-count">0</div>
+                    <div class="stat-label">錯誤</div>
+                </div>
+            </div>
+
+            <button class="btn restart-btn" id="restart-btn" onclick="restartTest()" style="display: none;">重新測試</button>
+        </div>
+    </div>
+
+    <script>
+        class VoiceTest {
+            constructor() {
+                this.numbers = [
+                    { num: 2, chinese: '二' },
+                    { num: 3, chinese: '三' },
+                    { num: 4, chinese: '四' },
+                    { num: 5, chinese: '五' },
+                    { num: 6, chinese: '六' },
+                    { num: 7, chinese: '七' },
+                    { num: 8, chinese: '八' },
+                    { num: 9, chinese: '九' },
+                    { num: 10, chinese: '十' }
+                ];
+
+                this.currentIndex = 0;
+                this.results = [];
+                this.recognition = null;
+                this.isListening = false;
+
+                this.initSpeechRecognition();
+                this.updateDisplay();
+                this.renderTestGrid();
+            }
+
+            initSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window) {
+                    this.recognition = new webkitSpeechRecognition();
+                } else if ('SpeechRecognition' in window) {
+                    this.recognition = new SpeechRecognition();
+                } else {
+                    document.getElementById('status').textContent = '此瀏覽器不支援語音識別功能';
+                    document.getElementById('status').className = 'result-wrong';
+                    document.getElementById('start-btn').disabled = true;
+                    return;
+                }
+
+                this.recognition.lang = 'zh-TW';
+                this.recognition.continuous = false;
+                this.recognition.interimResults = false;
+                this.recognition.maxAlternatives = 5;
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    document.getElementById('status').textContent = '🎤 正在聽取語音...';
+                    document.getElementById('status').className = 'listening';
+                    document.getElementById('start-btn').disabled = true;
+                };
+
+                this.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.trim();
+                    console.log('語音識別結果：', transcript);
+
+                    // 檢查所有可能的結果
+                    const allResults = [];
+                    for (let i = 0; i < event.results[0].length; i++) {
+                        allResults.push(event.results[0][i].transcript.trim());
+                    }
+                    console.log('所有候選結果：', allResults);
+
+                    this.processVoiceResult(transcript, allResults);
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('語音識別錯誤：', event.error);
+                    this.isListening = false;
+                    document.getElementById('status').textContent = '語音識別發生錯誤：' + event.error;
+                    document.getElementById('status').className = 'result-wrong';
+                    document.getElementById('start-btn').disabled = false;
+                };
+
+                this.recognition.onend = () => {
+                    this.isListening = false;
+                    document.getElementById('start-btn').disabled = false;
+
+                    // 如果沒有得到結果，顯示沒有語音
+                    if (this.results.length === this.currentIndex) {
+                        this.processVoiceResult(null, []);
+                    }
+                };
+            }
+
+            processVoiceResult(transcript, allResults) {
+                const currentNumber = this.numbers[this.currentIndex];
+                let voiceNumber = null;
+
+                if (transcript) {
+                    voiceNumber = this.chineseToNumber(transcript);
+                }
+
+                if (voiceNumber === currentNumber.num) {
+                    // 正確
+                    this.results[this.currentIndex] = 'correct';
+                    document.getElementById('status').textContent = `✅ 正確！識別到：${transcript}`;
+                    document.getElementById('status').className = 'result-correct';
+                } else if (voiceNumber !== null) {
+                    // 識別到數字但錯誤
+                    this.results[this.currentIndex] = 'wrong';
+                    document.getElementById('status').textContent = `❌ 錯誤！識別到：${transcript} (${voiceNumber})，正確答案是：${currentNumber.chinese}`;
+                    document.getElementById('status').className = 'result-wrong';
+                } else if (transcript) {
+                    // 識別到文字但無法轉換為數字
+                    this.results[this.currentIndex] = 'wrong';
+                    document.getElementById('status').textContent = `❌ 無法轉為數字！識別到：${transcript}，正確答案是：${currentNumber.chinese}`;
+                    document.getElementById('status').className = 'result-wrong';
+                } else {
+                    // 沒有識別到任何內容
+                    this.results[this.currentIndex] = 'wrong';
+                    document.getElementById('status').textContent = `❌ 沒有語音！正確答案是：${currentNumber.chinese}`;
+                    document.getElementById('status').className = 'result-no-input';
+                }
+
+                // 顯示所有候選結果（調試用）
+                if (allResults.length > 1) {
+                    console.log('其他候選：', allResults.slice(1));
+                }
+
+                this.updateResults();
+
+                // 啟用下一個按鈕
+                if (this.currentIndex < this.numbers.length - 1) {
+                    document.getElementById('next-btn').disabled = false;
+                } else {
+                    this.showFinalResults();
+                }
+            }
+
+            chineseToNumber(text) {
+                const numberMap = {
+                    '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
+                    '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+                    '1': 1, '2': 2, '3': 3, '4': 4, '5': 5,
+                    '6': 6, '7': 7, '8': 8, '9': 9
+                };
+
+                // 處理「十」的特殊情況
+                if (text === '十') {
+                    return 10;
+                }
+
+                return numberMap[text] || null;
+            }
+
+            updateDisplay() {
+                const current = this.numbers[this.currentIndex];
+                document.getElementById('test-number').textContent = current.num;
+                document.getElementById('chinese-number').textContent = current.chinese;
+                document.getElementById('current-index').textContent = this.currentIndex + 1;
+
+                // 計算正確率
+                const completedTests = this.results.filter(r => r !== undefined).length;
+                const correctTests = this.results.filter(r => r === 'correct').length;
+                const accuracy = completedTests > 0 ? Math.round((correctTests / completedTests) * 100) : 0;
+                document.getElementById('accuracy').textContent = accuracy + '%';
+            }
+
+            renderTestGrid() {
+                const grid = document.getElementById('test-grid');
+                grid.innerHTML = '';
+
+                this.numbers.forEach((number, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'test-item';
+                    item.textContent = `${number.num} (${number.chinese})`;
+
+                    if (this.results[index] === 'correct') {
+                        item.classList.add('correct');
+                    } else if (this.results[index] === 'wrong') {
+                        item.classList.add('wrong');
+                    } else {
+                        item.classList.add('pending');
+                    }
+
+                    grid.appendChild(item);
+                });
+            }
+
+            updateResults() {
+                this.renderTestGrid();
+                this.updateDisplay();
+            }
+
+            showFinalResults() {
+                const correctCount = this.results.filter(r => r === 'correct').length;
+                const wrongCount = this.results.filter(r => r === 'wrong').length;
+
+                document.getElementById('correct-count').textContent = correctCount;
+                document.getElementById('wrong-count').textContent = wrongCount;
+                document.getElementById('summary-stats').style.display = 'grid';
+                document.getElementById('restart-btn').style.display = 'block';
+
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('start-btn').style.display = 'none';
+
+                document.getElementById('status').textContent = '測試完成！';
+                document.getElementById('status').className = '';
+            }
+        }
+
+        let voiceTest = new VoiceTest();
+
+        function startTest() {
+            if (voiceTest.recognition && !voiceTest.isListening) {
+                voiceTest.recognition.start();
+            }
+        }
+
+        function nextNumber() {
+            voiceTest.currentIndex++;
+            voiceTest.updateDisplay();
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('status').textContent = '點擊開始測試';
+            document.getElementById('status').className = '';
+        }
+
+        function restartTest() {
+            voiceTest = new VoiceTest();
+            document.getElementById('summary-stats').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+            document.getElementById('start-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').disabled = true;
+        }
+    </script>
+</body>
+</html>
