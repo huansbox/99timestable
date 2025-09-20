@@ -692,12 +692,7 @@ class MultiplicationApp {
         // 移除之前的模式類別
         practiceContainer.classList.remove('input-mode-keyboard', 'input-mode-voice', 'input-mode-both');
 
-        if (this.inputMethod === 'keyboard') {
-            // 只顯示虛擬鍵盤
-            numberPad.style.display = 'flex';
-            micButton.style.display = 'none';
-            practiceContainer.classList.add('input-mode-keyboard');
-        } else if (this.inputMethod === 'voice') {
+        if (this.inputMethod === 'voice') {
             // 只顯示語音輸入
             numberPad.style.display = 'none';
             micButton.style.display = 'inline-block';
@@ -716,9 +711,11 @@ class MultiplicationApp {
         // 檢查瀏覽器支援
         if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             console.warn('瀏覽器不支援語音識別');
-            // 如果不支援，改回鍵盤模式
-            this.inputMethod = 'keyboard';
-            this.setupInputMethod();
+            // 如果不支援語音，只顯示虛擬鍵盤
+            const numberPad = document.getElementById('number-pad');
+            const micButton = document.getElementById('mic-input-btn');
+            numberPad.style.display = 'flex';
+            micButton.style.display = 'none';
             return;
         }
 
