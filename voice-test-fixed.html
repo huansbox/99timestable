@@ -423,14 +423,17 @@
                     this.updateMicButton();
                     this.clearTimers();
 
-                    // 如果沒有收到任何結果，顯示提示
-                    if (!this.hasResult) {
-                        this.log('⚠️ 沒有識別到任何語音');
-                        document.getElementById('answer').textContent = '沒有識別到語音，請重試';
-                        document.getElementById('result').innerHTML = '<span class="result-incorrect">❌ 沒有識別到語音，請重試並說話大聲一點</span>';
-                        // 仍然顯示下一題按鈕，讓用戶可以繼續
-                        document.getElementById('next-button').style.display = 'block';
-                    }
+                    // 延遲檢查結果，給 onresult 事件處理時間
+                    setTimeout(() => {
+                        // 如果沒有收到任何結果，顯示提示
+                        if (!this.hasResult) {
+                            this.log('⚠️ 沒有識別到任何語音');
+                            document.getElementById('answer').textContent = '沒有識別到語音，請重試';
+                            document.getElementById('result').innerHTML = '<span class="result-incorrect">❌ 沒有識別到語音，請重試並說話大聲一點</span>';
+                            // 確保顯示下一題按鈕，讓用戶可以繼續
+                            document.getElementById('next-button').style.display = 'block';
+                        }
+                    }, 200); // 給 onresult 事件足夠時間處理
                 };
 
                 // 處理無匹配結果
@@ -573,12 +576,26 @@
                 // 處理特殊情況
                 if (text === '十') return 10;
 
-                // 處理 X十Y 格式
+                // 處理 X十Y 格式（如：二十四）
                 const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);
                 if (tenMatch) {
                     const tens = tenMatch[1] ? chineseDigits[tenMatch[1]] : 1;
                     const ones = tenMatch[2] ? chineseDigits[tenMatch[2]] : 0;
                     return tens * 10 + ones;
+                }
+
+                // 新增：處理連續數字（如：四二 → 42、三六 → 36）
+                if (text.length === 2) {
+                    const digit1 = chineseDigits[text[0]];
+                    const digit2 = chineseDigits[text[1]];
+                    if (digit1 !== undefined && digit2 !== undefined) {
+                        // 只處理有效的二位數組合
+                        const result = digit1 * 10 + digit2;
+                        if (result >= 10 && result <= 99) {
+                            this.log(`📝 連續數字轉換: "${text}" → ${result}`);
+                            return result;
+                        }
+                    }
                 }
 
                 // 處理純個位數
