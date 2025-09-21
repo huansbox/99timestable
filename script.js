@@ -317,6 +317,8 @@ class MultiplicationApp {
         this.questionCount = 10; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
         this.practiceRecords = new PracticeRecords(); // 記錄管理
+        this.soundEnabled = true; // 音效開關狀態
+        this.audioContext = null; // Web Audio API context
         this.initStartScreen();
     }
 
@@ -665,6 +667,9 @@ class MultiplicationApp {
             this.currentQuestions = this.getRandomQuestions(this.questionCount);
         }
 
+        // 讀取音效設定
+        this.soundEnabled = document.getElementById('enable-sound').checked;
+
         // 隱藏開始頁面，顯示練習頁面
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('practice-screen').style.display = '';
@@ -673,6 +678,11 @@ class MultiplicationApp {
         const timerContainer = document.querySelector('.timer-container');
         if (timerContainer) {
             timerContainer.style.display = this.showTimer ? 'flex' : 'none';
+        }
+
+        // 初始化音效系統
+        if (this.soundEnabled) {
+            this.initSoundEffects();
         }
 
         this.init();
@@ -1173,6 +1183,11 @@ class MultiplicationApp {
         const feedbackEl = document.getElementById('feedback');
         feedbackEl.textContent = '太棒了！ ✓';
         feedbackEl.className = 'feedback correct';
+
+        // 播放答對音效
+        if (this.soundEnabled) {
+            this.playCorrectSound();
+        }
     }
 
     showIncorrectFeedback(source = 'keyboard', voiceNumber = null, originalText = null) {
@@ -1196,6 +1211,11 @@ class MultiplicationApp {
 
         feedbackEl.className = 'feedback incorrect';
 
+        // 播放答錯音效
+        if (this.soundEnabled) {
+            this.playIncorrectSound();
+        }
+
         // 1秒後清除錯誤提示
         setTimeout(() => {
             this.resetFeedback();
@@ -1206,6 +1226,75 @@ class MultiplicationApp {
         const feedbackEl = document.getElementById('feedback');
         feedbackEl.textContent = '';
         feedbackEl.className = 'feedback';
+    }
+
+    // 初始化音效系統
+    initSoundEffects() {
+        if (!this.audioContext && (window.AudioContext || window.webkitAudioContext)) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    // 播放答對音效（簡短成功音）
+    playCorrectSound() {
+        if (!this.soundEnabled || !this.audioContext) return;
+
+        try {
+            const notes = [523.25, 783.99]; // C5, G5
+            const volume = 0.25;
+
+            notes.forEach((freq, i) => {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.type = 'triangle';
+                oscillator.frequency.value = freq;
+
+                const startTime = this.audioContext.currentTime + (i * 0.15);
+                const duration = 0.2;
+
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration);
+            });
+        } catch (error) {
+            console.warn('音效播放失敗:', error);
+        }
+    }
+
+    // 播放答錯音效（溫和下降音）
+    playIncorrectSound() {
+        if (!this.soundEnabled || !this.audioContext) return;
+
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+
+            oscillator.type = 'sine';
+            const duration = 0.3;
+            const volume = 0.25;
+
+            oscillator.frequency.setValueAtTime(350, this.audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + duration);
+
+            gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + duration);
+        } catch (error) {
+            console.warn('音效播放失敗:', error);
+        }
     }
 
     nextQuestion() {

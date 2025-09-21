@@ -11,7 +11,8 @@
       "Bash(start index.html)",
       "Bash(git checkout:*)",
       "Bash(git branch:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(start sound-test.html)"
     ],
     "deny": [],
     "ask": []
