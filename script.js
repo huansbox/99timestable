@@ -317,7 +317,6 @@ class MultiplicationApp {
         this.questionCount = 10; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
         this.practiceRecords = new PracticeRecords(); // 記錄管理
-        this.soundEnabled = true; // 音效開關狀態
         this.audioContext = null; // Web Audio API context
         this.initStartScreen();
     }
@@ -667,9 +666,6 @@ class MultiplicationApp {
             this.currentQuestions = this.getRandomQuestions(this.questionCount);
         }
 
-        // 讀取音效設定
-        this.soundEnabled = document.getElementById('enable-sound').checked;
-
         // 隱藏開始頁面，顯示練習頁面
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('practice-screen').style.display = '';
@@ -680,10 +676,8 @@ class MultiplicationApp {
             timerContainer.style.display = this.showTimer ? 'flex' : 'none';
         }
 
-        // 初始化音效系統
-        if (this.soundEnabled) {
-            this.initSoundEffects();
-        }
+        // 初始化音效系統（一律開啟）
+        this.initSoundEffects();
 
         this.init();
     }
@@ -1185,9 +1179,7 @@ class MultiplicationApp {
         feedbackEl.className = 'feedback correct';
 
         // 播放答對音效
-        if (this.soundEnabled) {
-            this.playCorrectSound();
-        }
+        this.playCorrectSound();
     }
 
     showIncorrectFeedback(source = 'keyboard', voiceNumber = null, originalText = null) {
@@ -1212,9 +1204,7 @@ class MultiplicationApp {
         feedbackEl.className = 'feedback incorrect';
 
         // 播放答錯音效
-        if (this.soundEnabled) {
-            this.playIncorrectSound();
-        }
+        this.playIncorrectSound();
 
         // 1秒後清除錯誤提示
         setTimeout(() => {
@@ -1237,7 +1227,7 @@ class MultiplicationApp {
 
     // 播放答對音效（簡短成功音）
     playCorrectSound() {
-        if (!this.soundEnabled || !this.audioContext) return;
+        if (!this.audioContext) return;
 
         try {
             const notes = [523.25, 783.99]; // C5, G5
@@ -1270,7 +1260,7 @@ class MultiplicationApp {
 
     // 播放答錯音效（溫和下降音）
     playIncorrectSound() {
-        if (!this.soundEnabled || !this.audioContext) return;
+        if (!this.audioContext) return;
 
         try {
             const oscillator = this.audioContext.createOscillator();
@@ -1294,6 +1284,77 @@ class MultiplicationApp {
             oscillator.stop(this.audioContext.currentTime + duration);
         } catch (error) {
             console.warn('音效播放失敗:', error);
+        }
+    }
+
+    // 播放遊戲過關音效（一般完成）
+    playCompletionSound() {
+        if (!this.audioContext) return;
+
+        try {
+            const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C-E-G-C-E-G
+            const volume = 0.25;
+
+            notes.forEach((freq, i) => {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.type = 'sine';
+                oscillator.frequency.value = freq;
+
+                const startTime = this.audioContext.currentTime + (i * 0.1);
+                const duration = 0.15;
+
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration);
+            });
+        } catch (error) {
+            console.warn('完成音效播放失敗:', error);
+        }
+    }
+
+    // 播放經典勝利號角（進入排行榜）
+    playVictoryFanfareSound() {
+        if (!this.audioContext) return;
+
+        try {
+            const notes = [
+                {freq: 261.63, start: 0, duration: 0.2},      // C4 - 等
+                {freq: 329.63, start: 0.2, duration: 0.2},   // E4 - 能
+                {freq: 392.00, start: 0.4, duration: 0.2},   // G4 - 等
+                {freq: 523.25, start: 0.6, duration: 0.3}    // C5 - 登登～
+            ];
+            const volume = 0.25;
+
+            notes.forEach(note => {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.type = 'square';
+                oscillator.frequency.value = note.freq;
+
+                const startTime = this.audioContext.currentTime + note.start;
+
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(volume * 0.7, startTime + note.duration * 0.7);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + note.duration);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + note.duration);
+            });
+        } catch (error) {
+            console.warn('勝利號角播放失敗:', error);
         }
     }
 
@@ -1367,7 +1428,16 @@ class MultiplicationApp {
                 fastestCompareText = `<div class="fastest-record-compare">🏆 平了最快記錄！太棒了！</div>`;
             }
         }
-        
+
+        // 播放完成音效
+        if (currentRank && currentRank <= 10) {
+            // 進入前10名排行榜 - 播放經典勝利號角
+            this.playVictoryFanfareSound();
+        } else {
+            // 未進入排行榜 - 播放遊戲過關音效
+            this.playCompletionSound();
+        }
+
         const appEl = document.getElementById('app');
         appEl.innerHTML = `
             <div class="completion ${completionClass}">
@@ -1403,6 +1473,9 @@ class MultiplicationApp {
             completionMessage = `🌟 恭喜完成 ${this.questionCount} 道九九乘法表練習！`;
             detailMessage = '從 2×1 到 9×9，你已經熟練掌握了所有基礎乘法！';
         }
+
+        // 播放遊戲過關音效（練習模式無排行榜）
+        this.playCompletionSound();
 
         appEl.innerHTML = `
             <div class="completion">
