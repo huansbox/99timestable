@@ -1186,12 +1186,12 @@ class MultiplicationApp {
         const feedbackEl = document.getElementById('feedback');
 
         if (source === 'voice') {
-            if (voiceNumber !== null) {
-                // 語音辨識成功但答錯
-                feedbackEl.textContent = `${voiceNumber}，再試一次！`;
-            } else if (voiceNumber === false) {
+            if (voiceNumber === false) {
                 // 語音辨識到非數字 - 顯示實際識別到的文字
                 feedbackEl.textContent = `識別到：${originalText}，再試一次！`;
+            } else if (voiceNumber !== null && voiceNumber !== undefined) {
+                // 語音辨識成功但答錯
+                feedbackEl.textContent = `${voiceNumber}，再試一次！`;
             } else {
                 // 沒有接收到語音
                 feedbackEl.textContent = '沒有語音，再試一次！';
