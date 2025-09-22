@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>語音識別錯誤日誌測試</title>
-    <meta name="description" content="語音識別錯誤日誌功能測試頁面">
+    <title>語音識別測試工具</title>
+    <meta name="description" content="真實語音識別測試 2-81 數字，記錄錯誤改進系統">
 
     <!-- iOS優化 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="語音日誌測試">
+    <meta name="apple-mobile-web-app-title" content="語音測試">
 
     <style>
         * {
@@ -22,175 +22,228 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             color: #333;
+            overflow-x: hidden;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 20px;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: white;
+            border-radius: 20px;
             padding: 30px;
             text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            font-size: 2rem;
+            color: #4facfe;
+            font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
         .header p {
-            opacity: 0.9;
+            color: #666;
             font-size: 1.1rem;
         }
 
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            margin-bottom: 40px;
-            padding: 25px;
-            border: 2px solid #f0f0f0;
-            border-radius: 15px;
-            background: #fafafa;
-        }
-
-        .section h2 {
-            color: #4facfe;
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .test-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+        .current-number {
+            font-size: 8rem;
             font-weight: bold;
-            color: #555;
+            color: #4facfe;
+            margin: 20px 0;
+            text-shadow: 0 4px 8px rgba(79, 172, 254, 0.3);
         }
 
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+        .test-status {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #666;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #4facfe;
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
         }
 
         .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 15px 25px;
+            border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s;
-            margin-right: 10px;
-            margin-bottom: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
         }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .btn-danger {
+        .btn-mic {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            font-size: 1.5rem;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .btn-mic.listening {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            animation: pulse 1.5s infinite;
         }
 
-        .log-table th {
-            background: #4facfe;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: bold;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        .log-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .log-table tr:hover {
+        .recognition-result {
             background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .result-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .progress-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            transition: width 0.3s;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .stats-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .stats-card h3 {
-            color: #4facfe;
-            margin-bottom: 15px;
-        }
-
-        .stats-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .stats-item:last-child {
-            border-bottom: none;
-        }
-
-        .no-data {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 30px;
-        }
-
-        .auto-test-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .errors-log {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .error-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .error-item strong {
+            color: #4facfe;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid #4facfe;
+            background: white;
+            color: #4facfe;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #4facfe;
+            color: white;
         }
 
         .toast {
@@ -200,8 +253,8 @@
             background: #4facfe;
             color: white;
             padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 1000;
             transform: translateX(100%);
             transition: transform 0.3s;
@@ -211,44 +264,25 @@
             transform: translateX(0);
         }
 
-        .log-count {
-            background: #4facfe;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-
         @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .current-number {
+                font-size: 6rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
             .container {
-                margin: 10px;
-                border-radius: 10px;
+                padding: 10px;
             }
 
-            .content {
+            .test-panel, .progress-panel, .errors-log {
                 padding: 20px;
-            }
-
-            .section {
-                padding: 20px;
-            }
-
-            .auto-test-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .log-table {
-                font-size: 14px;
-            }
-
-            .log-table th,
-            .log-table td {
-                padding: 8px;
             }
         }
     </style>
@@ -256,130 +290,136 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎤 語音識別錯誤日誌測試</h1>
-            <p>測試語音識別錯誤記錄系統功能</p>
+            <h1>🎤 語音識別測試工具</h1>
+            <p>測試語音輸入 2-81 數字，自動記錄識別錯誤用於改進系統</p>
         </div>
 
-        <div class="content">
-            <!-- 手動模擬區域 -->
-            <div class="section">
-                <h2>📝 手動模擬錯誤</h2>
-                <div class="form-group">
-                    <label for="correct-answer">正確答案：</label>
-                    <input type="number" id="correct-answer" placeholder="例如：8" min="1" max="99">
-                </div>
-                <div class="form-group">
-                    <label for="recognized-text">識別結果：</label>
-                    <input type="text" id="recognized-text" placeholder="例如：吧、是吧、七、九">
-                </div>
-                <div class="form-group">
-                    <label for="question-text">題目：</label>
-                    <input type="text" id="question-text" placeholder="例如：2 × 4 = (?)">
-                </div>
-                <button class="btn" onclick="addManualLog()">➕ 新增錯誤記錄</button>
-            </div>
+        <div class="main-content">
+            <div class="test-panel">
+                <h2>📊 語音測試</h2>
 
-            <!-- 自動測試區域 -->
-            <div class="section">
-                <h2>🚀 自動測試案例</h2>
-                <p style="margin-bottom: 20px; color: #666;">點擊下方按鈕快速生成不同類型的測試數據：</p>
-                <div class="auto-test-grid">
-                    <button class="btn" onclick="addTestCase('八', '吧', '2 × 4 = (?)')">「八」→「吧」</button>
-                    <button class="btn" onclick="addTestCase('四八', '是吧', '6 × 8 = (?)')">「四八」→「是吧」</button>
-                    <button class="btn" onclick="addTestCase('四', '是', '3 × (?) = 12')">「四」→「是」</button>
-                    <button class="btn" onclick="addTestCase('七', '奇', '7 × 3 = (?)')">「七」→「奇」</button>
-                    <button class="btn" onclick="addTestCase('九', '鳩', '9 × 6 = (?)')">「九」→「鳩」</button>
-                    <button class="btn" onclick="addTestCase('六', '流', '2 × 3 = (?)')">「六」→「流」</button>
-                    <button class="btn" onclick="addTestCase('二十四', '24', '8 × 3 = (?)')">數字混合</button>
-                    <button class="btn" onclick="generateRandomTests()">🎲 生成隨機測試</button>
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="sequential">順序測試</button>
+                    <button class="mode-btn" data-mode="random">隨機測試</button>
+                    <button class="mode-btn" data-mode="custom">自選數字</button>
+                </div>
+
+                <div class="test-status" id="test-status">按「開始測試」開始</div>
+
+                <div class="current-number" id="current-number">?</div>
+
+                <div class="controls">
+                    <button class="btn" id="start-test">🚀 開始測試</button>
+                    <button class="btn" id="stop-test" disabled>⏹️ 停止測試</button>
+                    <button class="btn-mic" id="mic-btn" disabled>🎤</button>
+                </div>
+
+                <div class="recognition-result" id="recognition-result">
+                    請說出上方顯示的數字
+                </div>
+
+                <div class="controls">
+                    <button class="btn" id="skip-btn" disabled>⏭️ 跳過</button>
+                    <button class="btn" id="retry-btn" disabled>🔄 重試</button>
+                    <button class="btn" id="export-btn">📊 匯出錯誤記錄</button>
                 </div>
             </div>
 
-            <!-- 日誌管理區域 -->
-            <div class="section">
-                <h2>🗂️ 日誌管理 <span class="log-count" id="log-count">0 筆記錄</span></h2>
-                <div style="margin-bottom: 20px;">
-                    <button class="btn" onclick="refreshLogs()">🔄 重新載入</button>
-                    <button class="btn btn-secondary" onclick="exportCSV()">📊 匯出 CSV</button>
-                    <button class="btn btn-danger" onclick="clearAllLogs()">🗑️ 清除所有日誌</button>
+            <div class="progress-panel">
+                <h2>📈 測試進度</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-tested">0</div>
+                        <div class="stat-label">已測試</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-correct">0</div>
+                        <div class="stat-label">正確</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-errors">0</div>
+                        <div class="stat-label">錯誤</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="accuracy-rate">0%</div>
+                        <div class="stat-label">準確率</div>
+                    </div>
                 </div>
 
-                <div id="logs-container">
-                    <div class="no-data">尚無日誌記錄</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div style="text-align: center; color: #666; margin-top: 10px;">
+                    <span id="progress-text">0 / 80 (2-81)</span>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" id="clear-logs">🗑️ 清除記錄</button>
+                    <button class="btn" id="view-analysis">📊 查看分析</button>
                 </div>
             </div>
+        </div>
 
-            <!-- 統計資訊區域 -->
-            <div class="section">
-                <h2>📈 統計資訊</h2>
-                <div id="stats-container" class="stats-grid">
-                    <div class="no-data">載入統計資訊中...</div>
+        <div class="errors-log">
+            <h2>⚠️ 識別錯誤記錄 <span id="error-count">(0)</span></h2>
+            <div id="errors-container">
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    尚無錯誤記錄
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // VoiceLogger 類別
+        // VoiceLogger 類別（從 script.js 複製）
         class VoiceLogger {
             constructor() {
-                this.logKey = 'voice-recognition-errors';
-                this.maxLogs = 100; // 最多保存 100 筆記錄
+                this.logKey = 'voice-recognition-test-errors';
+                this.maxLogs = 200;
             }
 
-            // 記錄語音識別錯誤
-            logError(correctAnswer, recognizedText, question) {
+            logError(correctAnswer, recognizedText, timestamp = null) {
                 const logs = this.getLogs();
-                const timestamp = new Date();
+                const now = timestamp || new Date();
 
                 const logEntry = {
-                    id: timestamp.getTime(),
-                    timestamp: timestamp.toISOString(),
-                    date: timestamp.toLocaleDateString('zh-TW'),
-                    time: timestamp.toLocaleTimeString('zh-TW', { hour12: false }),
-                    correctAnswer: correctAnswer,
+                    id: now.getTime(),
+                    timestamp: now.toISOString(),
+                    date: now.toLocaleDateString('zh-TW'),
+                    time: now.toLocaleTimeString('zh-TW', { hour12: false }),
+                    correctAnswer: correctAnswer.toString(),
                     recognizedText: recognizedText,
-                    question: question,
                     userAgent: navigator.userAgent.includes('iPad') ? 'iPad' :
                               navigator.userAgent.includes('iPhone') ? 'iPhone' : 'Desktop'
                 };
 
                 logs.push(logEntry);
 
-                // 限制日誌數量，移除最舊的記錄
                 if (logs.length > this.maxLogs) {
                     logs.shift();
                 }
 
                 localStorage.setItem(this.logKey, JSON.stringify(logs));
-                console.log('語音錯誤已記錄:', logEntry);
                 return logEntry;
             }
 
-            // 取得所有日誌
             getLogs() {
                 const logs = localStorage.getItem(this.logKey);
                 return logs ? JSON.parse(logs) : [];
             }
 
-            // 取得日誌總數
-            getLogCount() {
-                return this.getLogs().length;
-            }
-
-            // 清除所有日誌
             clearLogs() {
                 localStorage.removeItem(this.logKey);
             }
 
-            // 匯出為 CSV 格式
             exportAsCSV() {
                 const logs = this.getLogs();
                 if (logs.length === 0) {
-                    return '沒有日誌資料';
+                    return '沒有錯誤記錄';
                 }
 
-                const headers = ['日期', '時間', '正確答案', '識別結果', '題目', '裝置'];
+                const headers = ['日期', '時間', '目標數字', '識別結果', '裝置'];
                 const csvRows = [headers.join(',')];
 
                 logs.forEach(log => {
@@ -387,8 +427,7 @@
                         log.date,
                         log.time,
                         log.correctAnswer,
-                        `"${log.recognizedText}"`, // 用引號包圍避免 CSV 問題
-                        `"${log.question}"`,
+                        `"${log.recognizedText}"`,
                         log.userAgent
                     ];
                     csvRows.push(row.join(','));
@@ -397,24 +436,23 @@
                 return csvRows.join('\n');
             }
 
-            // 取得統計資料
             getStats() {
                 const logs = this.getLogs();
                 const stats = {
                     total: logs.length,
-                    byAnswer: {},
+                    byTarget: {},
                     byRecognized: {},
-                    recent: logs.slice(-10) // 最近 10 筆
+                    recent: logs.slice(-10)
                 };
 
                 logs.forEach(log => {
-                    // 按正確答案統計
-                    if (!stats.byAnswer[log.correctAnswer]) {
-                        stats.byAnswer[log.correctAnswer] = [];
+                    // 按目標數字統計
+                    if (!stats.byTarget[log.correctAnswer]) {
+                        stats.byTarget[log.correctAnswer] = [];
                     }
-                    stats.byAnswer[log.correctAnswer].push(log.recognizedText);
+                    stats.byTarget[log.correctAnswer].push(log.recognizedText);
 
-                    // 按識別文字統計
+                    // 按識別結果統計
                     if (!stats.byRecognized[log.recognizedText]) {
                         stats.byRecognized[log.recognizedText] = 0;
                     }
@@ -425,279 +463,488 @@
             }
         }
 
-        // 初始化日誌系統
-        const voiceLogger = new VoiceLogger();
+        // 語音識別測試應用
+        class VoiceRecognitionTester {
+            constructor() {
+                this.logger = new VoiceLogger();
+                this.recognition = null;
+                this.isListening = false;
+                this.currentNumber = null;
+                this.testMode = 'sequential'; // sequential, random, custom
+                this.testNumbers = [];
+                this.currentIndex = 0;
+                this.isTestRunning = false;
 
-        // 頁面載入時刷新顯示
-        document.addEventListener('DOMContentLoaded', function() {
-            refreshLogs();
-            updateStats();
-            updateLogCount();
+                // 統計數據
+                this.totalTested = 0;
+                this.totalCorrect = 0;
+                this.totalErrors = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.setupVoiceRecognition();
+                this.setupEventListeners();
+                this.updateUI();
+                this.loadErrorsLog();
+            }
+
+            setupVoiceRecognition() {
+                if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                    this.showToast('瀏覽器不支援語音識別功能', 'error');
+                    return;
+                }
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+
+                this.recognition.lang = 'zh-TW';
+                this.recognition.continuous = false;
+                this.recognition.interimResults = true;
+                this.recognition.maxAlternatives = 3;
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    this.updateMicButton();
+                    document.getElementById('recognition-result').textContent = '正在聽取語音...';
+                };
+
+                this.recognition.onresult = (event) => {
+                    let finalTranscript = '';
+
+                    for (let i = 0; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    if (finalTranscript) {
+                        this.processVoiceResult(finalTranscript.trim());
+                    }
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('語音識別錯誤:', event.error);
+                    this.isListening = false;
+                    this.updateMicButton();
+                    document.getElementById('recognition-result').textContent = '語音識別發生錯誤，請重試';
+                };
+
+                this.recognition.onend = () => {
+                    this.isListening = false;
+                    this.updateMicButton();
+                };
+            }
+
+            setupEventListeners() {
+                // 模式選擇
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.setTestMode(btn.dataset.mode);
+                    });
+                });
+
+                // 控制按鈕
+                document.getElementById('start-test').addEventListener('click', () => this.startTest());
+                document.getElementById('stop-test').addEventListener('click', () => this.stopTest());
+                document.getElementById('mic-btn').addEventListener('click', () => this.toggleMic());
+                document.getElementById('skip-btn').addEventListener('click', () => this.skipCurrentNumber());
+                document.getElementById('retry-btn').addEventListener('click', () => this.retryCurrentNumber());
+                document.getElementById('export-btn').addEventListener('click', () => this.exportErrors());
+                document.getElementById('clear-logs').addEventListener('click', () => this.clearLogs());
+                document.getElementById('view-analysis').addEventListener('click', () => this.showAnalysis());
+            }
+
+            setTestMode(mode) {
+                this.testMode = mode;
+
+                // 更新按鈕狀態
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+                // 重置測試
+                this.stopTest();
+                this.generateTestNumbers();
+            }
+
+            generateTestNumbers() {
+                switch (this.testMode) {
+                    case 'sequential':
+                        this.testNumbers = Array.from({length: 80}, (_, i) => i + 2); // 2-81
+                        break;
+                    case 'random':
+                        this.testNumbers = Array.from({length: 80}, (_, i) => i + 2);
+                        this.shuffleArray(this.testNumbers);
+                        break;
+                    case 'custom':
+                        // 簡化：測試最容易出錯的數字
+                        this.testNumbers = [8, 18, 28, 38, 48, 58, 68, 78, 4, 14, 24, 34, 44, 54, 64, 74];
+                        break;
+                }
+                this.currentIndex = 0;
+            }
+
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            startTest() {
+                this.generateTestNumbers();
+                this.isTestRunning = true;
+                this.currentIndex = 0;
+                this.updateControlButtons();
+                this.showNextNumber();
+                this.showToast('測試開始！請說出顯示的數字');
+            }
+
+            stopTest() {
+                this.isTestRunning = false;
+                this.currentNumber = null;
+                this.stopListening();
+                this.updateControlButtons();
+                document.getElementById('current-number').textContent = '?';
+                document.getElementById('test-status').textContent = '測試已停止';
+                document.getElementById('recognition-result').textContent = '按「開始測試」開始';
+            }
+
+            showNextNumber() {
+                if (this.currentIndex >= this.testNumbers.length) {
+                    this.completeTest();
+                    return;
+                }
+
+                this.currentNumber = this.testNumbers[this.currentIndex];
+                document.getElementById('current-number').textContent = this.currentNumber;
+                document.getElementById('test-status').textContent = `請說出數字：${this.currentNumber}`;
+                document.getElementById('recognition-result').textContent = '點擊麥克風開始錄音';
+                document.getElementById('recognition-result').className = 'recognition-result';
+
+                this.updateProgress();
+            }
+
+            processVoiceResult(transcript) {
+                const recognizedNumber = this.convertTextToNumber(transcript);
+
+                this.totalTested++;
+
+                if (recognizedNumber === this.currentNumber) {
+                    // 正確
+                    this.totalCorrect++;
+                    document.getElementById('recognition-result').textContent = `✅ 正確！識別為：${transcript}`;
+                    document.getElementById('recognition-result').className = 'recognition-result result-correct';
+
+                    setTimeout(() => {
+                        this.nextNumber();
+                    }, 1500);
+                } else {
+                    // 錯誤
+                    this.totalErrors++;
+
+                    // 記錄錯誤
+                    this.logger.logError(this.currentNumber, transcript);
+
+                    document.getElementById('recognition-result').textContent = `❌ 錯誤！目標：${this.currentNumber}，識別為：${transcript}`;
+                    document.getElementById('recognition-result').className = 'recognition-result result-error';
+
+                    this.loadErrorsLog();
+
+                    setTimeout(() => {
+                        this.nextNumber();
+                    }, 2000);
+                }
+
+                this.updateStatistics();
+            }
+
+            convertTextToNumber(text) {
+                // 複製 script.js 中的 convertTextToNumber 函數
+                text = text.replace(/[，。！？\s這]/g, '');
+
+                if (/^\d+$/.test(text)) {
+                    const num = parseInt(text);
+                    return num >= 0 && num <= 99 ? num : null;
+                }
+
+                const chineseDigits = {
+                    '零': 0, '〇': 0,
+                    '一': 1, '壹': 1,
+                    '二': 2, '貳': 2, '兩': 2,
+                    '三': 3, '參': 3,
+                    '四': 4, '肆': 4,
+                    '是': 4,
+                    '五': 5, '伍': 5,
+                    '六': 6, '陸': 6,
+                    '七': 7, '柒': 7,
+                    '八': 8, '捌': 8,
+                    '吧': 8,
+                    '九': 9, '玖': 9
+                };
+
+                if (text === '十') return 10;
+                if (text === '是吧') return 48;
+
+                const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);
+                if (tenMatch) {
+                    const tens = tenMatch[1] ? chineseDigits[tenMatch[1]] : 1;
+                    const ones = tenMatch[2] ? chineseDigits[tenMatch[2]] : 0;
+                    return tens * 10 + ones;
+                }
+
+                if (text.length === 2) {
+                    const digit1 = chineseDigits[text[0]];
+                    const digit2 = chineseDigits[text[1]];
+                    if (digit1 !== undefined && digit2 !== undefined) {
+                        const result = digit1 * 10 + digit2;
+                        if (result >= 10 && result <= 99) {
+                            return result;
+                        }
+                    }
+                }
+
+                if (text.length === 1 && chineseDigits.hasOwnProperty(text)) {
+                    return chineseDigits[text];
+                }
+
+                return null;
+            }
+
+            nextNumber() {
+                this.currentIndex++;
+                this.showNextNumber();
+            }
+
+            skipCurrentNumber() {
+                this.showToast('已跳過當前數字');
+                this.nextNumber();
+            }
+
+            retryCurrentNumber() {
+                document.getElementById('recognition-result').textContent = '點擊麥克風重新錄音';
+                document.getElementById('recognition-result').className = 'recognition-result';
+            }
+
+            completeTest() {
+                this.isTestRunning = false;
+                this.updateControlButtons();
+
+                const accuracy = this.totalTested > 0 ? ((this.totalCorrect / this.totalTested) * 100).toFixed(1) : 0;
+
+                document.getElementById('test-status').textContent = '測試完成！';
+                document.getElementById('recognition-result').textContent = `測試完成！準確率：${accuracy}%`;
+                document.getElementById('recognition-result').className = 'recognition-result result-correct';
+
+                this.showToast(`測試完成！準確率：${accuracy}%，錯誤：${this.totalErrors} 個`);
+            }
+
+            toggleMic() {
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            }
+
+            startListening() {
+                if (!this.recognition || !this.currentNumber) return;
+
+                try {
+                    this.recognition.start();
+                } catch (error) {
+                    console.error('啟動語音識別失敗:', error);
+                }
+            }
+
+            stopListening() {
+                if (this.recognition && this.isListening) {
+                    this.recognition.stop();
+                }
+            }
+
+            updateMicButton() {
+                const micBtn = document.getElementById('mic-btn');
+                if (this.isListening) {
+                    micBtn.textContent = '🔴';
+                    micBtn.classList.add('listening');
+                } else {
+                    micBtn.textContent = '🎤';
+                    micBtn.classList.remove('listening');
+                }
+            }
+
+            updateControlButtons() {
+                const startBtn = document.getElementById('start-test');
+                const stopBtn = document.getElementById('stop-test');
+                const micBtn = document.getElementById('mic-btn');
+                const skipBtn = document.getElementById('skip-btn');
+                const retryBtn = document.getElementById('retry-btn');
+
+                if (this.isTestRunning) {
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    micBtn.disabled = false;
+                    skipBtn.disabled = false;
+                    retryBtn.disabled = false;
+                } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    micBtn.disabled = true;
+                    skipBtn.disabled = true;
+                    retryBtn.disabled = true;
+                }
+            }
+
+            updateProgress() {
+                const total = this.testNumbers.length;
+                const current = this.currentIndex + 1;
+                const percentage = (current / total) * 100;
+
+                document.getElementById('progress-fill').style.width = `${percentage}%`;
+                document.getElementById('progress-text').textContent = `${current} / ${total}`;
+            }
+
+            updateStatistics() {
+                document.getElementById('total-tested').textContent = this.totalTested;
+                document.getElementById('total-correct').textContent = this.totalCorrect;
+                document.getElementById('total-errors').textContent = this.totalErrors;
+
+                const accuracy = this.totalTested > 0 ? ((this.totalCorrect / this.totalTested) * 100).toFixed(1) : 0;
+                document.getElementById('accuracy-rate').textContent = `${accuracy}%`;
+            }
+
+            updateUI() {
+                this.updateControlButtons();
+                this.updateStatistics();
+            }
+
+            loadErrorsLog() {
+                const logs = this.logger.getLogs();
+                const container = document.getElementById('errors-container');
+
+                document.getElementById('error-count').textContent = `(${logs.length})`;
+
+                if (logs.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">尚無錯誤記錄</div>';
+                    return;
+                }
+
+                const recentLogs = logs.slice(-10).reverse(); // 最近10筆，最新的在前
+
+                container.innerHTML = recentLogs.map(log => `
+                    <div class="error-item">
+                        <strong>目標：${log.correctAnswer}</strong> → 識別為：<span style="color: #ff6b6b;">${log.recognizedText}</span>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                            ${log.date} ${log.time} | ${log.userAgent}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            exportErrors() {
+                const csvContent = this.logger.exportAsCSV();
+
+                if (csvContent === '沒有錯誤記錄') {
+                    this.showToast('沒有錯誤記錄可以匯出', 'error');
+                    return;
+                }
+
+                navigator.clipboard.writeText(csvContent).then(() => {
+                    this.showToast('CSV 錯誤記錄已複製到剪貼簿');
+                }).catch(() => {
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `voice-recognition-test-errors-${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    this.showToast('CSV 檔案已下載');
+                });
+            }
+
+            clearLogs() {
+                if (confirm('確定要清除所有錯誤記錄嗎？')) {
+                    this.logger.clearLogs();
+                    this.loadErrorsLog();
+                    this.showToast('錯誤記錄已清除');
+                }
+            }
+
+            showAnalysis() {
+                const stats = this.logger.getStats();
+                if (stats.total === 0) {
+                    this.showToast('沒有錯誤記錄可以分析', 'error');
+                    return;
+                }
+
+                const topErrors = Object.entries(stats.byTarget)
+                    .sort(([,a], [,b]) => b.length - a.length)
+                    .slice(0, 5);
+
+                const topMisrecognitions = Object.entries(stats.byRecognized)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5);
+
+                let analysis = `=== 語音識別錯誤分析 ===\n\n`;
+                analysis += `總錯誤數：${stats.total}\n\n`;
+
+                analysis += `最容易出錯的數字：\n`;
+                topErrors.forEach(([num, errors]) => {
+                    analysis += `- ${num}：${errors.length} 次錯誤\n`;
+                });
+
+                analysis += `\n最常見的誤識別：\n`;
+                topMisrecognitions.forEach(([text, count]) => {
+                    analysis += `- 「${text}」：${count} 次\n`;
+                });
+
+                navigator.clipboard.writeText(analysis).then(() => {
+                    this.showToast('分析報告已複製到剪貼簿');
+                });
+            }
+
+            showToast(message, type = 'success') {
+                const existingToast = document.querySelector('.toast');
+                if (existingToast) {
+                    existingToast.remove();
+                }
+
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+
+                if (type === 'error') {
+                    toast.style.background = '#ff6b6b';
+                }
+
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // 初始化應用
+        document.addEventListener('DOMContentLoaded', () => {
+            new VoiceRecognitionTester();
         });
-
-        // 手動新增日誌記錄
-        function addManualLog() {
-            const correctAnswer = document.getElementById('correct-answer').value;
-            const recognizedText = document.getElementById('recognized-text').value;
-            const questionText = document.getElementById('question-text').value;
-
-            if (!correctAnswer || !recognizedText || !questionText) {
-                showToast('請填寫所有欄位', 'error');
-                return;
-            }
-
-            const logEntry = voiceLogger.logError(parseInt(correctAnswer), recognizedText, questionText);
-
-            // 清空表單
-            document.getElementById('correct-answer').value = '';
-            document.getElementById('recognized-text').value = '';
-            document.getElementById('question-text').value = '';
-
-            showToast('✅ 已新增錯誤記錄');
-            refreshLogs();
-            updateStats();
-            updateLogCount();
-        }
-
-        // 新增測試案例
-        function addTestCase(correctAnswer, recognizedText, questionText) {
-            const logEntry = voiceLogger.logError(correctAnswer, recognizedText, questionText);
-            showToast(`✅ 已新增測試案例: ${recognizedText}`);
-            refreshLogs();
-            updateStats();
-            updateLogCount();
-        }
-
-        // 生成隨機測試數據
-        function generateRandomTests() {
-            const testCases = [
-                {correct: '8', recognized: '吧', question: '2 × 4 = (?)'},
-                {correct: '48', recognized: '是吧', question: '6 × 8 = (?)'},
-                {correct: '4', recognized: '是', question: '2 × 2 = (?)'},
-                {correct: '7', recognized: '奇', question: '7 × 1 = (?)'},
-                {correct: '9', recognized: '鳩', question: '3 × 3 = (?)'},
-                {correct: '6', recognized: '流', question: '2 × 3 = (?)'},
-                {correct: '12', recognized: '十二', question: '4 × 3 = (?)'},
-                {correct: '15', recognized: '五十', question: '3 × 5 = (?)'},
-                {correct: '21', recognized: '二一', question: '7 × 3 = (?)'},
-                {correct: '36', recognized: '三流', question: '6 × 6 = (?)'}
-            ];
-
-            // 隨機選擇 3-5 個測試案例
-            const count = Math.floor(Math.random() * 3) + 3;
-            const selectedCases = testCases.sort(() => 0.5 - Math.random()).slice(0, count);
-
-            selectedCases.forEach((testCase, index) => {
-                setTimeout(() => {
-                    voiceLogger.logError(testCase.correct, testCase.recognized, testCase.question);
-                }, index * 100); // 間隔 100ms 添加
-            });
-
-            setTimeout(() => {
-                showToast(`🎲 已生成 ${count} 筆隨機測試數據`);
-                refreshLogs();
-                updateStats();
-                updateLogCount();
-            }, count * 100 + 100);
-        }
-
-        // 刷新日誌顯示
-        function refreshLogs() {
-            const logs = voiceLogger.getLogs();
-            const container = document.getElementById('logs-container');
-
-            if (logs.length === 0) {
-                container.innerHTML = '<div class="no-data">尚無日誌記錄</div>';
-                return;
-            }
-
-            // 按時間倒序排列（最新的在前）
-            const sortedLogs = logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            const tableHTML = `
-                <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>日期時間</th>
-                            <th>正確答案</th>
-                            <th>識別結果</th>
-                            <th>題目</th>
-                            <th>裝置</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedLogs.map(log => `
-                            <tr>
-                                <td>${log.date} ${log.time}</td>
-                                <td style="font-weight: bold; color: #4facfe;">${log.correctAnswer}</td>
-                                <td style="color: #ff6b6b;">${log.recognizedText}</td>
-                                <td>${log.question}</td>
-                                <td>${log.userAgent}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            container.innerHTML = tableHTML;
-        }
-
-        // 更新統計資訊
-        function updateStats() {
-            const stats = voiceLogger.getStats();
-            const container = document.getElementById('stats-container');
-
-            if (stats.total === 0) {
-                container.innerHTML = '<div class="no-data">尚無統計資料</div>';
-                return;
-            }
-
-            // 處理統計數據
-            const topMisrecognitions = Object.entries(stats.byRecognized)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 10);
-
-            const topProblematicAnswers = Object.entries(stats.byAnswer)
-                .sort(([,a], [,b]) => b.length - a.length)
-                .slice(0, 10);
-
-            const statsHTML = `
-                <div class="stats-card">
-                    <h3>📊 總體統計</h3>
-                    <div class="stats-item">
-                        <span>總記錄數：</span>
-                        <strong>${stats.total} 筆</strong>
-                    </div>
-                    <div class="stats-item">
-                        <span>不同答案數：</span>
-                        <strong>${Object.keys(stats.byAnswer).length} 個</strong>
-                    </div>
-                    <div class="stats-item">
-                        <span>不同誤識別：</span>
-                        <strong>${Object.keys(stats.byRecognized).length} 種</strong>
-                    </div>
-                </div>
-
-                <div class="stats-card">
-                    <h3>🎯 常見誤識別</h3>
-                    ${topMisrecognitions.length > 0 ?
-                        topMisrecognitions.map(([text, count]) => `
-                            <div class="stats-item">
-                                <span>「${text}」</span>
-                                <strong>${count} 次</strong>
-                            </div>
-                        `).join('') :
-                        '<div class="no-data">暫無資料</div>'
-                    }
-                </div>
-
-                <div class="stats-card">
-                    <h3>⚠️ 問題答案</h3>
-                    ${topProblematicAnswers.length > 0 ?
-                        topProblematicAnswers.map(([answer, errors]) => `
-                            <div class="stats-item">
-                                <span>答案「${answer}」</span>
-                                <strong>${errors.length} 次錯誤</strong>
-                            </div>
-                        `).join('') :
-                        '<div class="no-data">暫無資料</div>'
-                    }
-                </div>
-
-                <div class="stats-card">
-                    <h3>🕒 最近記錄</h3>
-                    ${stats.recent.length > 0 ?
-                        stats.recent.slice(0, 5).map(log => `
-                            <div class="stats-item">
-                                <span>${log.correctAnswer} → ${log.recognizedText}</span>
-                                <small>${log.time}</small>
-                            </div>
-                        `).join('') :
-                        '<div class="no-data">暫無資料</div>'
-                    }
-                </div>
-            `;
-
-            container.innerHTML = statsHTML;
-        }
-
-        // 更新日誌計數
-        function updateLogCount() {
-            const count = voiceLogger.getLogCount();
-            document.getElementById('log-count').textContent = `${count} 筆記錄`;
-        }
-
-        // 匯出 CSV
-        function exportCSV() {
-            const csvContent = voiceLogger.exportAsCSV();
-
-            if (csvContent === '沒有日誌資料') {
-                showToast('❌ 沒有日誌資料可以匯出', 'error');
-                return;
-            }
-
-            // 複製到剪貼簿
-            navigator.clipboard.writeText(csvContent).then(() => {
-                showToast('📋 CSV 資料已複製到剪貼簿，可以貼到 Excel 或 Google Sheets');
-            }).catch(() => {
-                // 如果複製失敗，創建下載連結
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `voice-recognition-errors-${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast('📥 CSV 檔案已下載');
-            });
-        }
-
-        // 清除所有日誌
-        function clearAllLogs() {
-            if (confirm('⚠️ 確定要清除所有日誌記錄嗎？此操作無法復原。')) {
-                voiceLogger.clearLogs();
-                showToast('🗑️ 所有日誌記錄已清除');
-                refreshLogs();
-                updateStats();
-                updateLogCount();
-            }
-        }
-
-        // 顯示提示訊息
-        function showToast(message, type = 'success') {
-            // 移除現有的 toast
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
-
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-
-            if (type === 'error') {
-                toast.style.background = '#ff6b6b';
-            }
-
-            document.body.appendChild(toast);
-
-            // 觸發動畫
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-
-            // 3秒後移除
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
-            }, 3000);
-        }
     </script>
 </body>
 </html>
