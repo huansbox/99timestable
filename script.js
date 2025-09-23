@@ -403,6 +403,7 @@ class MultiplicationApp {
         const voiceErrorsBtn = document.getElementById('voice-errors-btn');
         const backFromRecordsBtn = document.getElementById('back-from-records');
         const backFromVoiceErrorsBtn = document.getElementById('back-from-voice-errors');
+        const settingsToggleBtn = document.getElementById('settings-toggle');
         
         // 使用更強的事件綁定，包含觸控事件
         startBtn.addEventListener('click', (e) => {
@@ -447,6 +448,12 @@ class MultiplicationApp {
         clearVoiceErrorsBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.clearVoiceErrors();
+        });
+
+        // 設定切換按鈕
+        settingsToggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.toggleSettings();
         });
 
         // 練習模式子選單邏輯
@@ -538,6 +545,20 @@ class MultiplicationApp {
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('voice-errors-screen').style.display = 'flex';
         this.loadVoiceErrors();
+    }
+
+    // 切換設定區域顯示/隱藏
+    toggleSettings() {
+        const settingsSection = document.getElementById('settings-section');
+        const settingsBtn = document.getElementById('settings-toggle');
+
+        if (settingsSection.style.display === 'none') {
+            settingsSection.style.display = 'block';
+            settingsBtn.textContent = '⚙️ 隱藏設定';
+        } else {
+            settingsSection.style.display = 'none';
+            settingsBtn.textContent = '⚙️ 設定';
+        }
     }
 
     // 載入語音錯誤記錄

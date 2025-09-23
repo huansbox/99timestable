@@ -39,8 +39,12 @@
             <div class="start-content">
                 <h1 class="start-title">九九乘法表練習</h1>
                 <p class="start-subtitle">互動式乘法練習</p>
-                
-                <div class="settings-section">
+
+                <!-- 設定按鈕 -->
+                <button id="settings-toggle" class="settings-toggle-btn">⚙️ 設定</button>
+
+                <!-- 設定區域（預設隱藏） -->
+                <div id="settings-section" class="settings-section" style="display: none;">
                     <div class="setting-item">
                         <label class="setting-label">
                             <input type="checkbox" id="show-timer" class="setting-checkbox">
@@ -51,7 +55,7 @@
 
                     <div class="setting-item">
                         <label class="setting-label">
-                            <input type="checkbox" id="show-virtual-keyboard" class="setting-checkbox">
+                            <input type="checkbox" id="show-virtual-keyboard" class="setting-checkbox" checked>
                             <span class="checkmark"></span>
                             顯示虛擬鍵盤
                         </label>
@@ -64,8 +68,10 @@
                             自動開啟語音
                         </label>
                     </div>
+                </div>
 
-
+                <!-- 題目數量選擇（保持顯示） -->
+                <div class="question-count-section">
                     <div class="setting-item">
                         <label class="setting-label">題目數量：</label>
                         <div class="radio-group">
@@ -150,8 +156,8 @@
                 </div>
 
                 <button id="start-practice" class="start-btn">開始練習</button>
-                <button id="view-records" class="view-records-btn">查看記錄</button>
-                <button id="voice-errors-btn" class="view-records-btn">語音識別錯誤記錄</button>
+                <button id="view-records" class="leaderboard-btn">排行榜</button>
+                <button id="voice-errors-btn" class="voice-errors-btn">語音識別錯誤記錄</button>
             </div>
         </div>
         

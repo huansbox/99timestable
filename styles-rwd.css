@@ -287,7 +287,8 @@ body {
 
 /* 按鈕樣式 */
 .start-btn,
-.view-records-btn,
+.leaderboard-btn,
+.voice-errors-btn,
 .back-btn,
 .restart-btn {
     border: none;
@@ -301,6 +302,7 @@ body {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    margin-bottom: var(--spacing-s);
 }
 
 .start-btn {
@@ -309,10 +311,55 @@ body {
     padding: var(--spacing-m) var(--spacing-l);
     font-size: var(--font-size-progress);
     width: 100%;
-    margin-bottom: var(--spacing-s);
 }
 
-.view-records-btn,
+/* 設定按鈕 */
+.settings-toggle-btn {
+    background: var(--border-color);
+    color: var(--text-color);
+    padding: var(--spacing-xs) var(--spacing-s);
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: var(--spacing-m);
+    align-self: flex-start;
+}
+
+.settings-toggle-btn:hover {
+    background: var(--text-secondary);
+    color: white;
+}
+
+/* 排行榜按鈕 - 使用藍色系 */
+.leaderboard-btn {
+    background: #4a90e2;
+    color: white;
+    padding: var(--spacing-s) var(--spacing-m);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.leaderboard-btn:hover {
+    background: #357abd;
+    transform: translateY(-1px);
+}
+
+/* 語音錯誤記錄按鈕 - 使用灰色系 */
+.voice-errors-btn {
+    background: var(--text-secondary);
+    color: white;
+    padding: var(--spacing-s) var(--spacing-m);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.voice-errors-btn:hover {
+    background: #4a4a4a;
+    transform: translateY(-1px);
+}
+
 .back-btn {
     background: var(--text-secondary);
     color: white;
@@ -327,10 +374,25 @@ body {
     transform: translateY(-1px);
 }
 
-.view-records-btn:hover,
 .back-btn:hover {
     background: #4a4a4a;
     transform: translateY(-1px);
+}
+
+/* 設定區域 */
+.settings-section {
+    width: 100%;
+    margin-bottom: var(--spacing-m);
+    padding: var(--spacing-m);
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.settings-section[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 /* === 歷史記錄頁面 === */
