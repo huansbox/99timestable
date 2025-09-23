@@ -664,7 +664,6 @@ class MultiplicationApp {
                     </div>
                     <div class="record-time">
                         ${this.practiceRecords.formatTime(record.totalTime)}
-                        <div class="time-detail">${(record.averageTimePerQuestion).toFixed(1)}秒/題</div>
                     </div>
                 </div>
             `;
