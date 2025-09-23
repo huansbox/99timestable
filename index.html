@@ -151,6 +151,7 @@
 
                 <button id="start-practice" class="start-btn">開始練習</button>
                 <button id="view-records" class="view-records-btn">查看記錄</button>
+                <button id="voice-errors-btn" class="view-records-btn">語音識別錯誤記錄</button>
             </div>
         </div>
         
@@ -251,6 +252,22 @@
                 </div>
                 
                 <button id="back-from-records" class="back-btn">返回</button>
+            </div>
+        </div>
+
+        <!-- 語音錯誤記錄頁面 -->
+        <div id="voice-errors-screen" class="records-screen" style="display: none;">
+            <div class="records-content">
+                <h1 class="records-title">⚠️ 語音識別錯誤記錄 (<span id="errors-count">0</span>)</h1>
+
+                <div id="voice-errors-list" class="records-list">
+                    <div class="no-records">還沒有錯誤記錄</div>
+                </div>
+
+                <div class="button-group" style="margin-top: 20px;">
+                    <button id="clear-voice-errors" class="back-btn" style="background: #ff6b6b;">清除所有記錄</button>
+                    <button id="back-from-voice-errors" class="back-btn">返回</button>
+                </div>
             </div>
         </div>
     </div>

@@ -179,6 +179,81 @@ const questions = [
     { id: 128, num1: 9, num2: 9, answer: 9, type: 'factor', result: 81 }
 ]; // 完整題庫，不在這裡打亂，而是在選題時隨機選取
 
+// 語音識別錯誤日誌管理類（簡化版）
+class VoiceLogger {
+    constructor() {
+        this.logKey = 'voice-recognition-errors';
+        this.maxLogs = 100; // 最多保存 100 筆記錄
+    }
+
+    // 偵測裝置類型
+    detectDevice() {
+        const ua = navigator.userAgent;
+        // 檢測 iPhone
+        if (ua.includes('iPhone')) return 'iPhone';
+        // 檢測 iPad（包含新版 iPadOS）
+        if (ua.includes('iPad') ||
+            (ua.includes('Macintosh') && 'ontouchend' in document)) {
+            return 'iPad';
+        }
+        // 其他觸控裝置
+        if ('ontouchstart' in window) return 'Touch';
+        // 桌面
+        return 'Desktop';
+    }
+
+    // 記錄語音識別錯誤
+    logError(correctAnswer, recognizedText, question) {
+        const logs = this.getLogs();
+        const timestamp = new Date();
+
+        const logEntry = {
+            id: timestamp.getTime(),
+            timestamp: timestamp.toISOString(),
+            date: timestamp.toLocaleDateString('zh-TW'),
+            time: timestamp.toLocaleTimeString('zh-TW', { hour12: false }),
+            correctAnswer: correctAnswer.toString(),
+            recognizedText: recognizedText,
+            question: question,
+            userAgent: this.detectDevice()
+        };
+
+        logs.push(logEntry);
+
+        // 限制日誌數量，移除最舊的記錄
+        if (logs.length > this.maxLogs) {
+            logs.shift();
+        }
+
+        localStorage.setItem(this.logKey, JSON.stringify(logs));
+        console.log('語音錯誤已記錄:', logEntry);
+        return logEntry;
+    }
+
+    // 取得所有日誌
+    getLogs() {
+        const logs = localStorage.getItem(this.logKey);
+        return logs ? JSON.parse(logs) : [];
+    }
+
+    // 取得日誌總數
+    getLogCount() {
+        return this.getLogs().length;
+    }
+
+    // 刪除單筆記錄
+    deleteLog(id) {
+        const logs = this.getLogs();
+        const filteredLogs = logs.filter(log => log.id !== parseInt(id));
+        localStorage.setItem(this.logKey, JSON.stringify(filteredLogs));
+    }
+
+    // 清除所有日誌
+    clearLogs() {
+        localStorage.removeItem(this.logKey);
+    }
+}
+
 // 練習記錄管理類
 class PracticeRecords {
     constructor() {
@@ -317,6 +392,7 @@ class MultiplicationApp {
         this.questionCount = 10; // 題目數量
         this.currentQuestions = []; // 當前使用的題目
         this.practiceRecords = new PracticeRecords(); // 記錄管理
+        this.voiceLogger = new VoiceLogger(); // 語音錯誤日誌
         this.audioContext = null; // Web Audio API context
         this.initStartScreen();
     }
@@ -324,7 +400,9 @@ class MultiplicationApp {
     initStartScreen() {
         const startBtn = document.getElementById('start-practice');
         const viewRecordsBtn = document.getElementById('view-records');
+        const voiceErrorsBtn = document.getElementById('voice-errors-btn');
         const backFromRecordsBtn = document.getElementById('back-from-records');
+        const backFromVoiceErrorsBtn = document.getElementById('back-from-voice-errors');
         
         // 使用更強的事件綁定，包含觸控事件
         startBtn.addEventListener('click', (e) => {
@@ -336,6 +414,11 @@ class MultiplicationApp {
             e.preventDefault();
             this.showRecords();
         });
+
+        voiceErrorsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showVoiceErrors();
+        });
         
         // 返回按鈕使用多種事件類型確保在iPad上工作
         backFromRecordsBtn.addEventListener('click', (e) => {
@@ -346,6 +429,24 @@ class MultiplicationApp {
         backFromRecordsBtn.addEventListener('touchend', (e) => {
             e.preventDefault();
             this.backToStart();
+        });
+
+        // 語音錯誤記錄返回按鈕
+        backFromVoiceErrorsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.backToStart();
+        });
+
+        backFromVoiceErrorsBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.backToStart();
+        });
+
+        // 清除語音錯誤記錄按鈕
+        const clearVoiceErrorsBtn = document.getElementById('clear-voice-errors');
+        clearVoiceErrorsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearVoiceErrors();
         });
 
         // 練習模式子選單邏輯
@@ -428,7 +529,71 @@ class MultiplicationApp {
     // 返回開始頁面
     backToStart() {
         document.getElementById('records-screen').style.display = 'none';
+        document.getElementById('voice-errors-screen').style.display = 'none';
         document.getElementById('start-screen').style.display = 'flex';
+    }
+
+    // 顯示語音錯誤記錄頁面
+    showVoiceErrors() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('voice-errors-screen').style.display = 'flex';
+        this.loadVoiceErrors();
+    }
+
+    // 載入語音錯誤記錄
+    loadVoiceErrors() {
+        const logs = this.voiceLogger.getLogs();
+        const errorsList = document.getElementById('voice-errors-list');
+        const errorsCount = document.getElementById('errors-count');
+
+        errorsCount.textContent = logs.length;
+
+        if (logs.length === 0) {
+            errorsList.innerHTML = '<div class="no-records">還沒有錯誤記錄</div>';
+            return;
+        }
+
+        // 按時間倒序排列（最新的在前）
+        const sortedLogs = logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        const errorsHTML = sortedLogs.map(log => `
+            <div class="error-item" id="error-${log.id}">
+                <div class="error-content">
+                    <div class="error-main">
+                        <strong>目標：${log.correctAnswer}</strong> → 識別為：<span class="error-text" style="color: #ff6b6b;">${log.recognizedText}</span>
+                    </div>
+                    <div class="error-meta" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                        ${log.date} ${log.time} | ${log.question} | ${log.userAgent}
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="app.deleteVoiceError('${log.id}')" style="
+                    background: none;
+                    border: none;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    opacity: 0.6;
+                    padding: 5px;
+                " title="刪除此記錄">🗑️</button>
+            </div>
+        `).join('');
+
+        errorsList.innerHTML = errorsHTML;
+    }
+
+    // 刪除單筆語音錯誤記錄
+    deleteVoiceError(id) {
+        if (confirm('確定要刪除這筆錯誤記錄嗎？')) {
+            this.voiceLogger.deleteLog(id);
+            this.loadVoiceErrors(); // 重新載入列表
+        }
+    }
+
+    // 清除所有語音錯誤記錄
+    clearVoiceErrors() {
+        if (confirm('確定要清除所有語音錯誤記錄嗎？此操作無法復原。')) {
+            this.voiceLogger.clearLogs();
+            this.loadVoiceErrors(); // 重新載入列表
+        }
     }
 
     // 載入排行榜（按題數分組顯示前10名）
@@ -814,7 +979,12 @@ class MultiplicationApp {
             // 自動檢查答案，傳遞語音來源和辨識的數字
             this.checkAnswer('voice', number);
         } else {
-            // 無法轉換為數字 - 傳遞原始識別文字
+            // 無法轉換為數字 - 記錄語音錯誤日誌
+            const correctAnswer = this.currentQuestions[this.currentQuestion].answer;
+            const currentQuestion = this.getCurrentQuestionText();
+            this.voiceLogger.logError(correctAnswer, transcript.trim(), currentQuestion);
+
+            // 傳遞原始識別文字
             this.showIncorrectFeedback('voice', false, transcript.trim());
         }
     }
@@ -877,6 +1047,16 @@ class MultiplicationApp {
         }
 
         return null;
+    }
+
+    // 取得當前題目的文字描述
+    getCurrentQuestionText() {
+        const question = this.currentQuestions[this.currentQuestion];
+        if (question.type === 'result') {
+            return `${question.num1} × ${question.num2} = ?`;
+        } else {
+            return `${question.num1} × ? = ${question.result}`;
+        }
     }
 
     startListening() {
@@ -1541,5 +1721,5 @@ class MultiplicationApp {
 
 // 等DOM載入完成後啟動應用程式
 document.addEventListener('DOMContentLoaded', () => {
-    new MultiplicationApp();
+    window.app = new MultiplicationApp();
 });
