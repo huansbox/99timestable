@@ -848,6 +848,7 @@ class MultiplicationApp {
         // 處理特殊情況
         if (text === '十') return 10;
         if (text === '是吧') return 48;  // 處理「四八」被識別為「是吧」的情況
+        if (text === '士林') return 40;  // 處理「四十」被識別為「士林」的情況
 
         // 處理 X十Y 格式（如：二十四）
         const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);

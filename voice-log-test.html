@@ -379,6 +379,21 @@
                 this.maxLogs = 200;
             }
 
+            detectDevice() {
+                const ua = navigator.userAgent;
+                // 檢測 iPhone
+                if (ua.includes('iPhone')) return 'iPhone';
+                // 檢測 iPad（包含新版 iPadOS）
+                if (ua.includes('iPad') ||
+                    (ua.includes('Macintosh') && 'ontouchend' in document)) {
+                    return 'iPad';
+                }
+                // 其他觸控裝置
+                if ('ontouchstart' in window) return 'Touch';
+                // 桌面
+                return 'Desktop';
+            }
+
             logError(correctAnswer, recognizedText, timestamp = null) {
                 const logs = this.getLogs();
                 const now = timestamp || new Date();
@@ -390,8 +405,7 @@
                     time: now.toLocaleTimeString('zh-TW', { hour12: false }),
                     correctAnswer: correctAnswer.toString(),
                     recognizedText: recognizedText,
-                    userAgent: navigator.userAgent.includes('iPad') ? 'iPad' :
-                              navigator.userAgent.includes('iPhone') ? 'iPhone' : 'Desktop'
+                    userAgent: this.detectDevice()
                 };
 
                 logs.push(logEntry);
@@ -688,6 +702,7 @@
 
                 if (text === '十') return 10;
                 if (text === '是吧') return 48;
+                if (text === '士林') return 40;  // 處理「四十」被識別為「士林」的情況
 
                 const tenMatch = text.match(/^([一二三四五六七八九]?)十([零一二三四五六七八九]?)$/);
                 if (tenMatch) {
