@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Read(D:\\mywork\\01_active\\99times/**)",
+      "Read(D:\\mywork\\02_maintenance\\99times/**)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -12,7 +12,9 @@
       "Bash(git checkout:*)",
       "Bash(git branch:*)",
       "Bash(git log:*)",
-      "Bash(start sound-test.html)"
+      "Bash(start sound-test.html)",
+      "Bash(git ls-tree:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
