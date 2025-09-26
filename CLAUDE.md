@@ -1,5 +1,8 @@
 # 九九乘法表練習工作紀錄
 
+## 專案狀態
+**目前階段**：維護階段 (02_maintenance) - 功能完整，定期維護與小幅優化
+
 ## 專案概要
 九九乘法表練習專案，包含兩個階段：
 1. **LaTeX版本**：將小朋友學校的練習試卷轉換為LaTeX格式，便於編輯和列印
@@ -637,7 +640,7 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 ## 📂 工作目錄設定說明
 
 **重要**：本專案已切換到Git同步工作流程
-- **工作目錄**：`D:\mywork\01_active\99times`（已連接GitHub repository）
+- **工作目錄**：`D:\mywork\02_maintenance\99times`（已連接GitHub repository）
 - **自動化流程**：修改檔案 → commit確認 → 自動push到GitHub
 - **GitHub同步**：https://github.com/huansbox/99timestable
 - **操作方式**：每次修改後輸入"commit"即可自動提交並推送
@@ -649,7 +652,7 @@ if (!this.isProcessingAnswer && answerInput.value === currentValue) {
 3. ✅ 建立自動化commit/push機制
 4. ✅ 測試提交流程正常運作
 
-**下次開啟對話時**：直接在 `D:\mywork\99times` 工作，享受自動化版本控制！
+**下次開啟對話時**：直接在 `D:\mywork\02_maintenance\99times` 工作，享受自動化版本控制！
 
 ## 🔧 開發工作流程 SOP
 
